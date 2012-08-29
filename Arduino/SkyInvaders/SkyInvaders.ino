@@ -25,6 +25,7 @@
 #include <EEPROM.h>
 #include <ArdOSC.h>
 #include <WS2801.h>
+#include <aJSON.h>
 
 //use serial debug or not
 #define USE_SERIAL_DEBUG 1
