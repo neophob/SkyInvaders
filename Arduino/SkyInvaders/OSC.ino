@@ -3,15 +3,6 @@
  *
  */
 
-//static colorvalues
-uint8_t oscR=255, oscG=255, oscB=255;
-
-//animation mode
-uint8_t oscMode;
-
-//update strip after DELAY
-uint8_t oscDelay = 20;
-
 
 //convert the first osc argument and return byte
 byte getFirstFloatArgument(OSCMessage *_mes) {
@@ -72,4 +63,5 @@ void oscCallbackB(OSCMessage *_mes){
   Serial.print("B:");
   Serial.println(oscB, DEC);
 #endif  
+
 }
