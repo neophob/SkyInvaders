@@ -16,3 +16,8 @@ uint32_t Color(uint8_t r, uint8_t g, uint8_t b) {
   c |= b;
   return c;
 }
+
+//update static color
+void updateStaticColor() {
+  staticColor = Color(oscR,oscG,oscB);
+}

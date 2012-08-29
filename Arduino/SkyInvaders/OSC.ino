@@ -33,10 +33,23 @@ void oscCallbackChangeMode(OSCMessage *_mes){
 }
 
 
+void oscCallbackColorSet(OSCMessage *_mes){
+  byte arg=byte(_mes->getArgFloat(0));  
+/*  if (arg > MAX_NR_OF_MODES-1) {
+    return;
+  }
+*/
+//TODO verify if id is in range
+//TODO change current colorset (load colorset)
+}
+
+
+
 // R
 void oscCallbackR(OSCMessage *_mes){
   oscR = getFirstFloatArgument(_mes);
-
+  updateStaticColor();
+  
 #ifdef USE_SERIAL_DEBUG
   Serial.print("R:");
   Serial.println(oscR, DEC);
@@ -47,7 +60,8 @@ void oscCallbackR(OSCMessage *_mes){
 // G
 void oscCallbackG(OSCMessage *_mes){
   oscG = getFirstFloatArgument(_mes);
-
+  updateStaticColor();
+  
 #ifdef USE_SERIAL_DEBUG
   Serial.print("G:");
   Serial.println(oscG, DEC);
@@ -58,6 +72,7 @@ void oscCallbackG(OSCMessage *_mes){
 // B
 void oscCallbackB(OSCMessage *_mes){
   oscB = getFirstFloatArgument(_mes);
+  updateStaticColor();
 
 #ifdef USE_SERIAL_DEBUG
   Serial.print("B:");

@@ -78,21 +78,24 @@ OSCServer oscServer;
 #define OSC_MSG_STATIC_COL_G "/colg" 
 #define OSC_MSG_STATIC_COL_B "/colb" 
 
-//animation speed for color fade
-#define OSC_MSG_COLFADE_SPEED "/speed" 
+#define OSC_MSG_COLFADE_COLORSET "/colorSet" 
+
+//generic animation speed
+#define OSC_MSG_GENERIC_SPEED "/speed" 
 
 /**************
  * BUSINESS LOGIC
  **************/
-#define MODE_STATIC_COLOR 0
-#define MODE_COLOR_FADE 1
-#define MODE_SERVER_IMAGE 2
+const uint8_t MODE_STATIC_COLOR = 0;
+const uint8_t MODE_COLOR_FADE = 1;
+const uint8_t MODE_SERVER_IMAGE = 2;
 
 //animation mode
 uint8_t oscMode=MODE_STATIC_COLOR;
 
 //static colorvalues
 uint8_t oscR=255, oscG=255, oscB=255;
+uint32_t staticColor=0xffffff;
 
 //update strip after DELAY (in ms)
 uint8_t oscDelay = 20;
@@ -160,7 +163,9 @@ void setup(){
   oscServer.addCallback(OSC_MSG_STATIC_COL_G, &oscCallbackG); //PARAMETER: 1, float value 0..1
   oscServer.addCallback(OSC_MSG_STATIC_COL_B, &oscCallbackB); //PARAMETER: 1, float value 0..1
   oscServer.addCallback(OSC_MSG_MODE, &oscCallbackChangeMode); //PARAMETER: 1, float value 0..1
-  oscServer.addCallback(OSC_MSG_COLFADE_SPEED, &oscCallbackSpeed); //PARAMETER: 1, float value 0..1  
+  oscServer.addCallback(OSC_MSG_COLFADE_COLORSET, &oscCallbackColorSet); //PARAMETER: 1, float value 0..1  
+  oscServer.addCallback(OSC_MSG_GENERIC_SPEED, &oscCallbackSpeed); //PARAMETER: 1, float value 0..1  
+  
 
   //init animation mode
   initAnimationMode();

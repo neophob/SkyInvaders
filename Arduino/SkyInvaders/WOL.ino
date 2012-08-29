@@ -17,12 +17,12 @@ void WOL(byte mac[]) {
     //Writes UDP data to the remote connection. Must be wrapped between beginPacket() and endPacket().
 
     //Start of WOL magic paket (preamble)
-    for (byte i=0; i<6; i++) {
+    for (i=0; i<6; i++) {
       Udp.write(0xff);
     }
     
     //the wol packet contains 16 times the mac address  
-    for (byte i=0; i<16; i++) {
+    for (i=0; i<16; i++) {
       Udp.write(mac, sizeof mac);
     }
     
