@@ -29,18 +29,19 @@ void oscCallbackChangeMode(OSCMessage *_mes){
 
   oscMode=arg;
 //  modeSave = mode;
-//  initMode(); 
+  initAnimationMode();
 }
 
 
 void oscCallbackColorSet(OSCMessage *_mes){
   byte arg=byte(_mes->getArgFloat(0));  
-/*  if (arg > MAX_NR_OF_MODES-1) {
+  if (arg > MAX_COLOR_MODE-1) {
     return;
   }
-*/
-//TODO verify if id is in range
-//TODO change current colorset (load colorset)
+
+  oscColorSetNr = arg;
+  //load colorset
+  loadColorSet(oscColorSetNr);
 }
 
 

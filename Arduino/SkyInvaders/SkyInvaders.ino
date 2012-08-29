@@ -93,6 +93,9 @@ const uint8_t MODE_SERVER_IMAGE = 2;
 //animation mode
 uint8_t oscMode=MODE_STATIC_COLOR;
 
+//which color set is selected?
+uint8_t oscColorSetNr=0;
+
 //static colorvalues
 uint8_t oscR=255, oscG=255, oscB=255;
 uint32_t staticColor=0xffffff;
