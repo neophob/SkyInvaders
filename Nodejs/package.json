@@ -1,0 +1,8 @@
+{
+	"name": "examplejsonserver",
+	"version": "0.0.1",
+	"author": "Michael Vogt <michu@neophob.com>",
+	"dependencies": {
+    		"express": ""
+	}
+}
