@@ -7,6 +7,10 @@ byte broadcastAddress[] = { 255, 255, 255, 255 };    //to verify!
 
 //send wol magic pajet
 void WOL(byte mac[]) {
+#ifdef USE_SERIAL_DEBUG
+  Serial.print("Send WOL:");
+#endif 
+  
     byte i;
     //Starts a connection to write UDP data to the remote connection, parameter: remoteIP, remotePort
     //Hint about port 7: Since the magic packet is only scanned for the string above, and not actually 
@@ -28,5 +32,9 @@ void WOL(byte mac[]) {
     
     //Called after writing UDP data to the remote connection.
     Udp.endPacket();
+#ifdef USE_SERIAL_DEBUG
+  Serial.print("WOL done");
+#endif 
+    
 }
 

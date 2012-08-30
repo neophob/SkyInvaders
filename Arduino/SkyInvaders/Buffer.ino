@@ -1,5 +1,17 @@
 void initAnimationMode() {
- //todo 
+  switch(oscMode) {
+     case MODE_STATIC_COLOR:
+       break;
+       
+     case MODE_COLOR_FADE:
+       loadColorSet(oscColorSetNr);
+       break;
+       
+     case MODE_SERVER_IMAGE:
+       break;
+  }
+  
+ 
 }
 
 byte colorFadeOffset=0;

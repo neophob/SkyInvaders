@@ -14,7 +14,7 @@ void oscCallbackSpeed(OSCMessage *_mes){
   oscDelay = byte( _mes->getArgFloat(0)*MAX_SLEEP_TIME );
 
 #ifdef USE_SERIAL_DEBUG
-  Serial.print("D:");
+  Serial.print("Speed:");
   Serial.println(oscDelay, DEC);
 #endif 
 }
@@ -27,9 +27,15 @@ void oscCallbackChangeMode(OSCMessage *_mes){
     return;
   }
 
-  oscMode=arg;
-//  modeSave = mode;
-  initAnimationMode();
+#ifdef USE_SERIAL_DEBUG
+  Serial.print("Mode:");
+  Serial.println(oscMode, DEC);
+#endif 
+
+  if (arg!=oscMode) {
+    oscMode=arg;
+    initAnimationMode();
+  }  
 }
 
 
@@ -38,10 +44,18 @@ void oscCallbackColorSet(OSCMessage *_mes){
   if (arg > MAX_COLOR_MODE-1) {
     return;
   }
+#ifdef USE_SERIAL_DEBUG
+  Serial.print("ColorSet:");
+  Serial.println(oscColorSetNr, DEC);
+#endif 
 
-  oscColorSetNr = arg;
-  //load colorset
-  loadColorSet(oscColorSetNr);
+  //only if value change, load new colorset
+  if (arg!=oscColorSetNr) {
+    oscColorSetNr = arg;
+    //load colorset
+    loadColorSet(oscColorSetNr);    
+  }
+  
 }
 
 

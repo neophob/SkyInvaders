@@ -34,20 +34,21 @@
 #define USE_DHCP 1
 
 //default Pixels
-#define NR_OF_PIXELS 160
+#define NR_OF_PIXELS 50
+//160
 
 // maximal sleep time for the color animation
 #define MAX_SLEEP_TIME 160.0f
 
 //SkyInvaders knows 3 Animation Mode (Static Color, Color Fade, Serverimage)
-#define MAX_NR_OF_MODES 16
+#define MAX_NR_OF_MODES 3
 
 /**************
  * STRIP
  **************/
 //output pixels data/clock3/2
-int dataPin = 3; 
-int clockPin = 2;  
+int dataPin = 7; //3 
+int clockPin = 6; //2  
 
 //dummy init the pixel lib
 WS2801 strip = WS2801(); 
@@ -131,6 +132,11 @@ void setup(){
   //ws2801 start strips 
   strip.begin();
 
+#ifdef USE_SERIAL_DEBUG
+  Serial.print("WS2801 Strip initialized, Pixel count: ");
+  Serial.println(cnt, DEC);
+#endif
+
   //DHCP, hint: we cannot use DHCP and manual IP together, out of space!
 #ifdef USE_DHCP
   //start Ethernet library using dhcp
@@ -169,16 +175,26 @@ void setup(){
   oscServer.addCallback(OSC_MSG_MODE, &oscCallbackChangeMode); //PARAMETER: 1, float value 0..1
   oscServer.addCallback(OSC_MSG_COLFADE_COLORSET, &oscCallbackColorSet); //PARAMETER: 1, float value 0..1  
   oscServer.addCallback(OSC_MSG_GENERIC_SPEED, &oscCallbackSpeed); //PARAMETER: 1, float value 0..1  
+#ifdef USE_SERIAL_DEBUG
+  Serial.println("OSC initialized");
+#endif
   
 
   //init animation mode
   initAnimationMode();
+  
+  //just to be sure!
+  loadColorSet(0);
 
   //let the onboard arduino led blink
   pinMode(ledPin, OUTPUT);  
   synchronousBlink();
   delay(50);
   synchronousBlink();
+  
+#ifdef USE_SERIAL_DEBUG
+  Serial.println("Setup done");
+#endif  
 }
 
 

@@ -15,6 +15,10 @@ unsigned long colorsetColors[3];
 //init color set
 //----------------------------
 void initColorSet(unsigned long col[3]) {
+#ifdef USE_SERIAL_DEBUG
+  Serial.println("initColorSet");
+#endif 
+  
   //copy array.. memcpy? never heard of it...
   for (byte b=0; b<3; b++) {
     colorsetColors[b] = col[b];
@@ -122,7 +126,7 @@ void loadColorSet(byte colorMode) {
     break; 
   }
 #ifdef USE_SERIAL_DEBUG      
-  Serial.print("[Right] load new color: ");
+  Serial.print("load new color: ");
   Serial.println(colorMode);      
 #endif
   initColorSet(initialColor);
