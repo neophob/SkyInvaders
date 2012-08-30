@@ -1,3 +1,4 @@
+
 void initAnimationMode() {
   switch(oscMode) {
      case MODE_STATIC_COLOR:
@@ -18,7 +19,8 @@ byte colorFadeOffset=0;
 
 void loopAnimationMode() {
   switch(oscMode) {
-     case MODE_STATIC_COLOR:
+
+    case MODE_STATIC_COLOR:
        for (unsigned int i=0; i < strip.numPixels(); i++) {
          strip.setPixelColor(i, staticColor);
        }

@@ -38,7 +38,7 @@
 //160
 
 // maximal sleep time for the color animation
-#define MAX_SLEEP_TIME 160.0f
+#define MAX_SLEEP_TIME 250.0f
 
 //SkyInvaders knows 3 Animation Mode (Static Color, Color Fade, Serverimage)
 #define MAX_NR_OF_MODES 3
@@ -47,8 +47,8 @@
  * STRIP
  **************/
 //output pixels data/clock3/2
-int dataPin = 7; //3 
-int clockPin = 6; //2  
+int dataPin = 6; //3 
+int clockPin = 7; //2  
 
 //dummy init the pixel lib
 WS2801 strip = WS2801(); 
@@ -217,8 +217,7 @@ void loop(){
   } 
   else {
     //delay finished, update the strip content
-    currentDelay=oscDelay;
-    
+    currentDelay=oscDelay;    
     loopAnimationMode();
   }
 }

@@ -126,7 +126,7 @@ void loadColorSet(byte colorMode) {
     break; 
   }
 #ifdef USE_SERIAL_DEBUG      
-  Serial.print("load new color: ");
+  Serial.print("load new colorset: ");
   Serial.println(colorMode);      
 #endif
   initColorSet(initialColor);
