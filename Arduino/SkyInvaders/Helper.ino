@@ -21,3 +21,14 @@ uint32_t Color(uint8_t r, uint8_t g, uint8_t b) {
 void updateStaticColor() {
   staticColor = Color(oscR,oscG,oscB);
 }
+
+#ifdef USE_SERIAL_DEBUG 
+
+int freeRam() {
+  extern int __heap_start, *__brkval; 
+  int v; 
+  return (int) &v - (__brkval == 0 ? (int) &__heap_start : (int) __brkval); 
+}
+
+#endif
+

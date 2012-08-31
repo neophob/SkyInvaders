@@ -34,7 +34,7 @@
 #define USE_DHCP 1
 
 //default Pixels
-#define NR_OF_PIXELS 50
+#define NR_OF_PIXELS 160
 //160
 
 // maximal sleep time for the color animation
@@ -194,6 +194,8 @@ void setup(){
   
 #ifdef USE_SERIAL_DEBUG
   Serial.println("Setup done");
+  Serial.print("Free Memory: ");
+  Serial.println(freeRam());
 #endif  
 }
 
