@@ -17,11 +17,11 @@
 #X obj 395 3 cnv 15 140 180 empty empty RGB 20 12 0 14 -260097 -66577
 0;
 #X obj 420 44 vsl 15 128 0 1 0 0 empty empty empty 0 -9 0 10 -258113
--1 -1 12700 1;
+-1 -1 0 1;
 #X obj 455 44 vsl 15 128 0 1 0 0 empty empty empty 0 -9 0 10 -4034
--1 -1 11200 1;
+-1 -1 0 1;
 #X obj 493 44 vsl 15 128 0 1 0 0 empty empty empty 0 -9 0 10 -4160
--1 -1 12700 1;
+-1 -1 0 1;
 #X obj 569 4 cnv 15 140 180 empty empty Speed 20 12 0 14 -260097 -66577
 0;
 #X obj 624 43 vsl 15 128 0 1 0 0 empty empty empty 0 -9 0 10 -128992
@@ -44,6 +44,9 @@
 -1 -1 0 1;
 #X obj 784 286 pack f;
 #X msg 784 316 sendtyped /colorSet f \$1;
+#X obj 749 363 cnv 15 210 120 empty empty WOL 20 12 0 14 -260097 -66577
+0;
+#X msg 757 416 sendtyped /wol s affeaffeaffe;
 #X connect 1 0 7 0;
 #X connect 3 0 21 0;
 #X connect 4 0 23 0;
@@ -69,3 +72,4 @@
 #X connect 32 0 33 0;
 #X connect 33 0 34 0;
 #X connect 34 0 8 0;
+#X connect 36 0 8 0;

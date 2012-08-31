@@ -22,6 +22,17 @@ void updateStaticColor() {
   staticColor = Color(oscR,oscG,oscB);
 }
 
+//convert char to byte 
+//Src: http://stackoverflow.com/questions/1557400/hex-to-char-array-in-c
+byte xdigit( char digit ){
+  int val;
+       if( '0' <= digit && digit <= '9' ) val = digit -'0';
+  else if( 'a' <= digit && digit <= 'f' ) val = digit -'a'+10;
+  else if( 'A' <= digit && digit <= 'F' ) val = digit -'A'+10;
+  else                                    val = -1;
+  return val;
+}
+
 #ifdef USE_SERIAL_DEBUG 
 
 int freeRam() {
@@ -31,4 +42,6 @@ int freeRam() {
 }
 
 #endif
+
+
 

@@ -23,6 +23,8 @@
 #include <Ethernet.h>
 #include <EthernetUdp.h>
 #include <EEPROM.h>
+
+//make sure you enabled strings (#define _USE_STRING_) in OSCcommon.h
 #include <ArdOSC.h>
 #include <WS2801.h>
 #include <aJSON.h>
@@ -42,6 +44,7 @@
 
 //SkyInvaders knows 3 Animation Mode (Static Color, Color Fade, Serverimage)
 #define MAX_NR_OF_MODES 3
+
 
 /**************
  * STRIP
@@ -84,6 +87,8 @@ OSCServer oscServer;
 
 //generic animation speed
 #define OSC_MSG_GENERIC_SPEED "/speed" 
+
+#define OSC_MSG_WOL "/wol" 
 
 /**************
  * BUSINESS LOGIC
@@ -153,8 +158,8 @@ void setup(){
   Ethernet.begin(myMac, myIp)
 #endif 
 
-    //init UDP
-    Udp.begin(7);
+  //init UDP
+  Udp.begin(7);
 
 #ifdef USE_SERIAL_DEBUG 
   Serial.print("IP:");////32818
@@ -175,14 +180,16 @@ void setup(){
   oscServer.addCallback(OSC_MSG_MODE, &oscCallbackChangeMode); //PARAMETER: 1, float value 0..1
   oscServer.addCallback(OSC_MSG_COLFADE_COLORSET, &oscCallbackColorSet); //PARAMETER: 1, float value 0..1  
   oscServer.addCallback(OSC_MSG_GENERIC_SPEED, &oscCallbackSpeed); //PARAMETER: 1, float value 0..1  
+  oscServer.addCallback(OSC_MSG_WOL, &oscCallbackWol); //PARAMETER: 1, float value 0..1  
+
 #ifdef USE_SERIAL_DEBUG
   Serial.println("OSC initialized");
 #endif
-  
+
 
   //init animation mode
   initAnimationMode();
-  
+
   //just to be sure!
   loadColorSet(0);
 
@@ -191,7 +198,7 @@ void setup(){
   synchronousBlink();
   delay(50);
   synchronousBlink();
-  
+
 #ifdef USE_SERIAL_DEBUG
   Serial.println("Setup done");
   Serial.print("Free Memory: ");
@@ -223,6 +230,7 @@ void loop(){
     loopAnimationMode();
   }
 }
+
 
 
 
