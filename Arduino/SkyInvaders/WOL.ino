@@ -3,9 +3,9 @@
  * See http://en.wikipedia.org/wiki/Wake-on-LAN for more information
  */
 
-
-void SendWOLMagicPacket(byte * pMacAddress)
-{
+//Src: http://www.blueleafsoftware.com/Resources/EmbeddedSand/Wake_on_LAN
+//I made the code compatible with Arduino v1.0.1
+void SendWOLMagicPacket(byte * pMacAddress) {
   
 #ifdef USE_SERIAL_DEBUG
   Serial.print("Send WOL... ");
@@ -32,34 +32,31 @@ void SendWOLMagicPacket(byte * pMacAddress)
 }
 
 
-int UDP_RawSendto(byte* pDataPacket, int nPacketLength, int nLocalPort, byte* pRemoteIP, int nRemotePort)
-{
+int UDP_RawSendto(byte* pDataPacket, int nPacketLength, int nLocalPort, byte* pRemoteIP, int nRemotePort) {
   int nResult;
   int nSocketId; // Socket ID for Wiz5100
  
- nSocketId = 3;
   // Find a free socket id.
-/*  nSocketId = MAX_SOCK_NUM;
-  for (int i = 0; i < MAX_SOCK_NUM; i++) 
-  {
-    uint8_t s = w5100.readSnSR(i);
-    if (s == SnSR::CLOSED || s == SnSR::FIN_WAIT) 
-	  {
+  nSocketId = MAX_SOCK_NUM;
+  for (int i = 0; i < MAX_SOCK_NUM; i++) {
+    uint8_t s = W5100.readSnSR(i);
+    if (s == SnSR::CLOSED || s == SnSR::FIN_WAIT) {
       nSocketId = i;
       break;
     }
   }
  
-  if (nSocketId == MAX_SOCK_NUM)
+  if (nSocketId == MAX_SOCK_NUM) {
     return 0; // couldn't find one. 
- */
-  if (socket(nSocketId, SnMR::UDP, nLocalPort, 0))
-  {
+  }
+  
+  if (socket(nSocketId, SnMR::UDP, nLocalPort, 0)) {
     nResult = sendto(nSocketId,(unsigned char*)pDataPacket,nPacketLength,(unsigned char*)pRemoteIP,nRemotePort);
     close(nSocketId);
-  } else
+  } else {
     nResult = 0;
- 
+  }
+  
   return nResult;
 }
 
