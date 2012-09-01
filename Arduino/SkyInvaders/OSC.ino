@@ -124,7 +124,8 @@ void oscCallbackWol(OSCMessage *_mes){
     mac[ofs++] = sendb;
   }
   //send magic packet
-  WOL(mac);
+//  WOL(mac);
+  SendWOLMagicPacket(mac);
 }
 
 

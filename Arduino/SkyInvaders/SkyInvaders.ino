@@ -29,6 +29,9 @@
 #include <WS2801.h>
 
 
+#include <utility/w5100.h>
+#include <utility/socket.h>
+
 //use serial debug or not
 #define USE_SERIAL_DEBUG 1
 
@@ -160,8 +163,8 @@ void setup(){
   Ethernet.begin(myMac, myIp)
 #endif 
 
-  //init UDP
-  Udp.begin(7);
+    //init UDP
+    Udp.begin(7);
 
 #ifdef USE_SERIAL_DEBUG 
   Serial.print("IP:");////32818
@@ -233,6 +236,7 @@ void loop(){
     loopAnimationMode();
   }
 }
+
 
 
 
