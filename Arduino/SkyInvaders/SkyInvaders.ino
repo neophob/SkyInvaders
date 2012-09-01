@@ -29,6 +29,9 @@
 #include <WS2801.h>
 #include <aJSON.h>
 
+#include <utility\Socket.h>
+#include <utility\w5100.h>
+
 //use serial debug or not
 #define USE_SERIAL_DEBUG 1
 
@@ -89,6 +92,8 @@ OSCServer oscServer;
 #define OSC_MSG_GENERIC_SPEED "/speed" 
 
 #define OSC_MSG_WOL "/wol" 
+
+#define OSC_MSG_UPDATE_PIXEL "/pxl" 
 
 /**************
  * BUSINESS LOGIC
@@ -181,6 +186,7 @@ void setup(){
   oscServer.addCallback(OSC_MSG_COLFADE_COLORSET, &oscCallbackColorSet); //PARAMETER: 1, float value 0..1  
   oscServer.addCallback(OSC_MSG_GENERIC_SPEED, &oscCallbackSpeed); //PARAMETER: 1, float value 0..1  
   oscServer.addCallback(OSC_MSG_WOL, &oscCallbackWol); //PARAMETER: 1, float value 0..1  
+  oscServer.addCallback(OSC_MSG_UPDATE_PIXEL, &oscCallbackPixel); //PARAMETER: 2, int offset, 4xlong
 
 #ifdef USE_SERIAL_DEBUG
   Serial.println("OSC initialized");
