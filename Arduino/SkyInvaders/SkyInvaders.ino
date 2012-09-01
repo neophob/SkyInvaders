@@ -26,8 +26,6 @@
 
 //make sure you enabled strings (#define _USE_STRING_) in OSCcommon.h
 #include <ArdOSC.h>
-#include <WS2801.h>
-
 
 #include <utility/w5100.h>
 #include <utility/socket.h>
@@ -48,6 +46,16 @@
 //SkyInvaders knows 3 Animation Mode (Static Color, Color Fade, Serverimage)
 #define MAX_NR_OF_MODES 3
 
+// define strip hardware, use only ONE hardware type
+//#define USE_WS2801 1
+#define USE_LPD8806 1
+
+#ifdef USE_WS2801
+  #include <WS2801.h>
+#endif
+#ifdef USE_LPD8806
+  #include <LPD8806.h>
+#endif  
 
 /**************
  * STRIP
@@ -57,7 +65,12 @@ int dataPin = 6; //3
 int clockPin = 7; //2  
 
 //dummy init the pixel lib
+#ifdef USE_WS2801
 WS2801 strip = WS2801(); 
+#endif
+#ifdef USE_LPD8806
+LPD8806 strip = LPD8806(); 
+#endif  
 
 /**************
  * NETWORK
@@ -131,13 +144,25 @@ void setup(){
 #ifdef USE_SERIAL_DEBUG
   Serial.begin(115200);  
   Serial.println("Hello!");
+
+#ifdef USE_WS2801
+  Serial.println("INV2801!");
+#endif
+#ifdef USE_LPD8806
+  Serial.println("INV8806!");
+#endif    
 #endif
 
   int cnt = NR_OF_PIXELS;
 
   //TODO check EEPROM
 
+#ifdef USE_WS2801
   strip = WS2801(cnt, dataPin, clockPin); 
+#endif
+#ifdef USE_LPD8806
+  strip = LPD8806(cnt, dataPin, clockPin); 
+#endif  
 
   //ws2801 start strips 
   strip.begin();
