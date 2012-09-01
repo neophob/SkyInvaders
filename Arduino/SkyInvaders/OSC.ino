@@ -40,24 +40,21 @@ void oscCallbackChangeMode(OSCMessage *_mes){
 
 
 void oscCallbackColorSet(OSCMessage *_mes){
-  int16_t argCount = _mes->getArgsNum();
-  if (argCount<5) {
-#ifdef USE_SERIAL_DEBUG
-    Serial.print("Invalid Parametercount: ");
-    Serial.println(argCount, DEC);
-#endif     
+  byte arg=byte(_mes->getArgFloat(0));  
+  if (arg > MAX_COLOR_MODE-1) {
+    return;
   }
-  int32_t ofs = _mes->getArgInt32(0);
 #ifdef USE_SERIAL_DEBUG
-    Serial.print("OSC Update Pixel, offset: ");
-    Serial.println(ofs, DEC);
-#endif     
-  
-  //get 4 colors from osc message
-  for (byte b=0; b<4; b++) {
-    strip.setPixelColor(ofs+b, _mes->getArgInt32(b));
-  }
+  Serial.print("ColorSet:");
+  Serial.println(oscColorSetNr, DEC);
+#endif 
 
+  //only if value change, load new colorset
+  if (arg!=oscColorSetNr) {
+    oscColorSetNr = arg;
+    //load colorset
+    loadColorSet(oscColorSetNr);    
+  }
 }
 
 
@@ -132,12 +129,22 @@ void oscCallbackWol(OSCMessage *_mes){
 
 
 void oscCallbackPixel(OSCMessage *_mes){
-  oscB = getFirstFloatArgument(_mes);
-  updateStaticColor();
-
+  int16_t argCount = _mes->getArgsNum();
+  if (argCount<5) {
 #ifdef USE_SERIAL_DEBUG
-  Serial.print("B:");
-  Serial.println(oscB, DEC);
-#endif  
+    Serial.print("Invalid Parametercount: ");
+    Serial.println(argCount, DEC);
+#endif     
+  }
+  int32_t ofs = _mes->getArgInt32(0);
+#ifdef USE_SERIAL_DEBUG
+    Serial.print("OSC Update Pixel, offset: ");
+    Serial.println(ofs, DEC);
+#endif     
+  
+  //get 4 colors from osc message
+  for (byte b=0; b<4; b++) {
+    strip.setPixelColor(ofs+b, _mes->getArgInt32(b));
+  }
 }
 
