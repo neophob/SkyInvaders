@@ -27,10 +27,7 @@
 //make sure you enabled strings (#define _USE_STRING_) in OSCcommon.h
 #include <ArdOSC.h>
 #include <WS2801.h>
-#include <aJSON.h>
 
-#include <utility\Socket.h>
-#include <utility\w5100.h>
 
 //use serial debug or not
 #define USE_SERIAL_DEBUG 1
