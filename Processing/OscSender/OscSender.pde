@@ -9,29 +9,33 @@ Random r;
 
 
 void setup() {
-  size(400,400);
-  frameRate(1);
+  size(400, 400);
+  frameRate(25);
   /* start oscP5, listening for incoming messages at port 12000 */
-  oscP5 = new OscP5(this,12000);
-  
+  oscP5 = new OscP5(this, 12000);
+
   //CHANGE to your ip
-  myRemoteLocation = new NetAddress("192.168.111.23",10000);
-  
+  myRemoteLocation = new NetAddress("192.168.111.23", 10000);
+
   r = new Random();
 }
 
-
+int ii=0;
 void draw() {
 
   long now=System.currentTimeMillis();  
   for (int i=0; i<96; i+=4) {
-    long l1=r.nextLong()%0xffffff;
-/*    long l2=r.nextLong()%0xffffff;
-    long l3=r.nextLong()%0xffffff;
-    long l4=r.nextLong()%0xffffff;
-    Object[] oscParam = new Object[] {0, l1, l2, l3, l4};
-    oscP5.send("/pxl", oscParam, myRemoteLocation);*/
-    oscP5.send("/pxl",new Object[] {i, 0xffffff, 0x00aabb, 0x997755, 0xaffe00}, myRemoteLocation);
+    OscMessage myMessage = new OscMessage("/pxl");
+    myMessage.add(i);
+    myMessage.add(ii);
+    myMessage.add(ii);
+    myMessage.add(ii);
+    myMessage.add(ii++);
+/*    myMessage.add(r.nextLong()%0xffffff);
+    myMessage.add(r.nextLong()%0xffffff);
+    myMessage.add(r.nextLong()%0xffffff);
+    myMessage.add(r.nextLong()%0xffffff);
+*/    oscP5.send(myMessage, myRemoteLocation);
   }
   long needed = System.currentTimeMillis()-now;
   println("Sendtime: "+needed+"ms");
