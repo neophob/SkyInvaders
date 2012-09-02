@@ -37,7 +37,7 @@
 #define USE_DHCP 1
 
 //default Pixels
-#define NR_OF_PIXELS 160
+#define NR_OF_PIXELS 96
 //160
 
 // maximal sleep time for the color animation
@@ -61,8 +61,8 @@
  * STRIP
  **************/
 //output pixels data/clock3/2
-int dataPin = 6; //3 
-int clockPin = 7; //2  
+int dataPin = 7; //3 
+int clockPin = 6; //2  
 
 //dummy init the pixel lib
 #ifdef USE_WS2801
@@ -166,9 +166,10 @@ void setup(){
 
   //ws2801 start strips 
   strip.begin();
+  strip.show();
 
 #ifdef USE_SERIAL_DEBUG
-  Serial.print("WS2801 Strip initialized, Pixel count: ");
+  Serial.print("Strip initialized, Pixel count: ");
   Serial.println(cnt, DEC);
 #endif
 
@@ -259,6 +260,7 @@ void loop(){
     //delay finished, update the strip content
     currentDelay=oscDelay;    
     loopAnimationMode();
+    strip.show();
   }
 }
 
