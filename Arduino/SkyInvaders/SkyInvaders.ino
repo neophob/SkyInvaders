@@ -131,6 +131,7 @@ uint8_t oscDelay = 20;
 //current delay value
 uint8_t currentDelay = 0;
 
+uint32_t frame = 0;
 /**************
  * MISC
  **************/
@@ -261,11 +262,8 @@ void loop(){
     currentDelay=oscDelay;    
     loopAnimationMode();
     strip.show();
-    
-#ifdef USE_SERIAL_DEBUG
-  Serial.print(".");
-#endif    
-  }
+    frame++;
+  }  
 }
 
 
