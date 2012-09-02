@@ -261,6 +261,10 @@ void loop(){
     currentDelay=oscDelay;    
     loopAnimationMode();
     strip.show();
+    
+#ifdef USE_SERIAL_DEBUG
+  Serial.print(".");
+#endif    
   }
 }
 

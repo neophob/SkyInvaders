@@ -136,7 +136,12 @@ void oscCallbackPixel(OSCMessage *_mes){
     Serial.print("Invalid Parametercount: ");
     Serial.println(argCount, DEC);
 #endif     
+    return;
   }
+  
+  //change mode to serverimage - else buffer would be overwritten!
+  oscMode = MODE_SERVER_IMAGE;
+  
   int32_t ofs = _mes->getArgInt32(0);
 #ifdef USE_SERIAL_DEBUG
     Serial.print("OSC Update Pixel, offset: ");
@@ -145,7 +150,13 @@ void oscCallbackPixel(OSCMessage *_mes){
   
   //get 4 colors from osc message
   for (byte b=0; b<4; b++) {
-    strip.setPixelColor(ofs+b, _mes->getArgInt32(b));
+    int32_t col=_mes->getArgInt32(b+1);
+    strip.setPixelColor(ofs+b, col);
+#ifdef USE_SERIAL_DEBUG
+    Serial.print("Set: ");
+    Serial.println(col, HEX);
+#endif     
   }
+  
 }
 
