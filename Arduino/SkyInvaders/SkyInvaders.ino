@@ -226,6 +226,8 @@ void setup(){
   //just to be sure!
   loadColorSet(0);
 
+  dumpSdCardInformation();
+
   //let the onboard arduino led blink
   pinMode(ledPin, OUTPUT);  
   synchronousBlink();
