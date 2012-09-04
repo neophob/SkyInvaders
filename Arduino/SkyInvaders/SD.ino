@@ -1,5 +1,7 @@
 #include <SD.h>
 
+//use this lib: http://henningkarlsen.com/electronics/library.php?id=37
+
 // set up variables using the SD utility library functions:
 Sd2Card card;
 SdVolume volume;
@@ -80,6 +82,14 @@ void dumpSdCardInformation() {
 
 }
 
+//Fileformat to write to SDCard
+String createWritesting(File *filea, uint16_t ofs, uint32_t col) {
+  return ofs+";"+col;
+}
+
+void processLineentry() {
+  
+}
 
 void readFile() {
   // open the file. note that only one file can be open at a time,

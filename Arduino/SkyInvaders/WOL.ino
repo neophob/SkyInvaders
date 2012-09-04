@@ -38,7 +38,7 @@ int UDP_RawSendto(byte* pDataPacket, int nPacketLength, int nLocalPort, byte* pR
  
   // Find a free socket id.
   nSocketId = MAX_SOCK_NUM;
-  for (int i = 0; i < MAX_SOCK_NUM; i++) {
+  for (byte i = 0; i < MAX_SOCK_NUM; i++) {
     uint8_t s = W5100.readSnSR(i);
     if (s == SnSR::CLOSED || s == SnSR::FIN_WAIT) {
       nSocketId = i;
