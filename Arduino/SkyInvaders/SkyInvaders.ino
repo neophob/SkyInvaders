@@ -30,6 +30,9 @@
 //use DHCP server OR static IP, dhcp needs 3148 bytes
 #define USE_DHCP 1
 
+//use serial debug or not, needs 3836 bytes
+#define USE_SERIAL_DEBUG 1
+
 
 #include <avr/pgmspace.h>
 #include <SPI.h>
@@ -48,9 +51,6 @@
 #include <utility/w5100.h>
 #include <utility/socket.h>
 #endif
-
-//use serial debug or not
-#define USE_SERIAL_DEBUG 1
 
 //default Pixels
 #define NR_OF_PIXELS 96
