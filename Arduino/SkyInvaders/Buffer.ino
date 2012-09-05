@@ -1,5 +1,6 @@
 
 void initAnimationMode() {
+  
   switch(oscMode) {
      case MODE_STATIC_COLOR:
        break;
@@ -26,6 +27,7 @@ void loopAnimationMode() {
        }
        break;
        
+       
      case MODE_COLOR_FADE:
        for (unsigned int i=0; i < strip.numPixels(); i++) {
          strip.setPixelColor(i, getSmoothColor((colorFadeOffset+i)%255));
@@ -33,7 +35,15 @@ void loopAnimationMode() {
        colorFadeOffset++;
        break;
        
+       
      case MODE_SERVER_IMAGE:
+     
+#ifdef USE_SD
+       //check if no data recieved, switch to playback mode
+       if (frame > 200) { //TODO verify 200
+           readFileFromSd();
+       }
+#endif
        break;
   }
 }

@@ -3,12 +3,14 @@
  * See http://en.wikipedia.org/wiki/Wake-on-LAN for more information
  */
 
+#ifdef USE_WOL
+
 //Src: http://www.blueleafsoftware.com/Resources/EmbeddedSand/Wake_on_LAN
 //I made the code compatible with Arduino v1.0.1
-void SendWOLMagicPacket(byte * pMacAddress) {
+void SendWOLMagicPacket(byte *pMacAddress) {
   
 #ifdef USE_SERIAL_DEBUG
-  Serial.print("Send WOL... ");
+  Serial.println(F("Send WOL"));
 #endif 
 
   // The magic packet data sent to wake the remote machine. Target machine's
@@ -26,7 +28,7 @@ void SendWOLMagicPacket(byte * pMacAddress) {
   
   if (UDP_RawSendto(abyMagicPacket, nMagicPacketLength, nLocalPort, abyTargetIPAddress, nWOLPort) != nMagicPacketLength) {
 #ifdef USE_SERIAL_DEBUG
-    Serial.println("Error sending WOL packet");
+    Serial.println(F("Error sending WOL packet"));
 #endif
   }
 }
@@ -60,4 +62,5 @@ int UDP_RawSendto(byte* pDataPacket, int nPacketLength, int nLocalPort, byte* pR
   return nResult;
 }
 
+#endif
 

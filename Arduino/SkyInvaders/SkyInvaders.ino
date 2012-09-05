@@ -19,22 +19,38 @@
  * 
  */
 
+// FEATURES
+
+//WOL needs 1164 bytes 
+#define USE_WOL 1
+
+//SD card needs 7778 bytes
+#define USE_SD
+
+//use DHCP server OR static IP, dhcp needs 3148 bytes
+#define USE_DHCP 1
+
+
+#include <avr/pgmspace.h>
 #include <SPI.h>
 #include <Ethernet.h>
-#include <EthernetUdp.h>
-#include <EEPROM.h>
+
+#ifdef USE_SD
+#include <SD.h>
+#endif
 
 //make sure you enabled strings (#define _USE_STRING_) in OSCcommon.h
 #include <ArdOSC.h>
 
+//used as we need to send out raw socket stuff
+#ifdef USE_WOL
+#include <EthernetUdp.h>
 #include <utility/w5100.h>
 #include <utility/socket.h>
+#endif
 
 //use serial debug or not
 #define USE_SERIAL_DEBUG 1
-
-//use DHCP server OR static IP
-#define USE_DHCP 1
 
 //default Pixels
 #define NR_OF_PIXELS 96
@@ -47,8 +63,8 @@
 #define MAX_NR_OF_MODES 3
 
 // define strip hardware, use only ONE hardware type
-//#define USE_WS2801 1
-#define USE_LPD8806 1
+#define USE_WS2801 1
+//#define USE_LPD8806 1
 
 #ifdef USE_WS2801
   #include <WS2801.h>
@@ -61,8 +77,8 @@
  * STRIP
  **************/
 //output pixels data/clock3/2
-int dataPin = 7; //3 
-int clockPin = 6; //2  
+#define dataPin 7
+#define clockPin 6
 
 //dummy init the pixel lib
 #ifdef USE_WS2801
@@ -109,6 +125,13 @@ OSCServer oscServer;
 #define OSC_MSG_UPDATE_PIXEL "/pxl" 
 
 /**************
+ * SD CARD
+ **************/
+#ifdef USE_SD
+File sdFileRead;
+#endif
+
+/**************
  * BUSINESS LOGIC
  **************/
 const uint8_t MODE_STATIC_COLOR = 0;
@@ -131,7 +154,7 @@ uint8_t oscDelay = 20;
 //current delay value
 uint8_t currentDelay = 0;
 
-uint32_t frame = 0;
+uint16_t frame = 0;
 /**************
  * MISC
  **************/
@@ -144,34 +167,24 @@ void setup(){
 
 #ifdef USE_SERIAL_DEBUG
   Serial.begin(115200);  
-  Serial.println("Hello!");
 
 #ifdef USE_WS2801
-  Serial.println("INV2801!");
+  Serial.println(F("INV2801"));
+  strip = WS2801(NR_OF_PIXELS, dataPin, clockPin);   
 #endif
 #ifdef USE_LPD8806
-  Serial.println("INV8806!");
+  Serial.println(F("INV8806"));
+  strip = LPD8806(NR_OF_PIXELS, dataPin, clockPin); 
 #endif    
 #endif
-
-  int cnt = NR_OF_PIXELS;
-
-  //TODO check EEPROM
-
-#ifdef USE_WS2801
-  strip = WS2801(cnt, dataPin, clockPin); 
-#endif
-#ifdef USE_LPD8806
-  strip = LPD8806(cnt, dataPin, clockPin); 
-#endif  
 
   //ws2801 start strips 
   strip.begin();
   strip.show();
 
 #ifdef USE_SERIAL_DEBUG
-  Serial.print("Strip initialized, Pixel count: ");
-  Serial.println(cnt, DEC);
+  Serial.print(F("# Pixel:"));
+  Serial.println(NR_OF_PIXELS, DEC);
 #endif
 
   //DHCP, hint: we cannot use DHCP and manual IP together, out of space!
@@ -179,7 +192,7 @@ void setup(){
   //start Ethernet library using dhcp
   if (Ethernet.begin(myMac) == 0) {
 #ifdef USE_SERIAL_DEBUG
-    Serial.println("Failed to configure Ethernet using DHCP");
+    Serial.println(F("No DHCP Server found"));
 #endif
     // no point in carrying on, so do nothing forevermore:
     for(;;)
@@ -187,14 +200,16 @@ void setup(){
   }
 #else
   //Manual IP
-  Ethernet.begin(myMac, myIp)
+  Ethernet.begin(myMac, myIp);
 #endif 
 
-    //init UDP
+#ifdef USE_WOL
+    //init UDP, used for WOL
     Udp.begin(7);
+#endif
 
 #ifdef USE_SERIAL_DEBUG 
-  Serial.print("IP:");////32818
+  Serial.print(F("IP:"));
   for (byte thisByte = 0; thisByte < 4; thisByte++) {
     // print the value of each byte of the IP address:
     Serial.print(Ethernet.localIP()[thisByte], DEC);
@@ -212,13 +227,10 @@ void setup(){
   oscServer.addCallback(OSC_MSG_MODE, &oscCallbackChangeMode); //PARAMETER: 1, float value 0..1
   oscServer.addCallback(OSC_MSG_COLFADE_COLORSET, &oscCallbackColorSet); //PARAMETER: 1, float value 0..1  
   oscServer.addCallback(OSC_MSG_GENERIC_SPEED, &oscCallbackSpeed); //PARAMETER: 1, float value 0..1  
+#ifdef USE_WOL  
   oscServer.addCallback(OSC_MSG_WOL, &oscCallbackWol); //PARAMETER: 1, float value 0..1  
-  oscServer.addCallback(OSC_MSG_UPDATE_PIXEL, &oscCallbackPixel); //PARAMETER: 2, int offset, 4xlong
-
-#ifdef USE_SERIAL_DEBUG
-  Serial.println("OSC initialized");
 #endif
-
+  oscServer.addCallback(OSC_MSG_UPDATE_PIXEL, &oscCallbackPixel); //PARAMETER: 2, int offset, 4xlong
 
   //init animation mode
   initAnimationMode();
@@ -226,17 +238,16 @@ void setup(){
   //just to be sure!
   loadColorSet(0);
 
-  dumpSdCardInformation();
+#ifdef USE_SD
+  initSdCardInformation();
+#endif
 
   //let the onboard arduino led blink
   pinMode(ledPin, OUTPUT);  
   synchronousBlink();
-  delay(50);
-  synchronousBlink();
 
 #ifdef USE_SERIAL_DEBUG
-  Serial.println("Setup done");
-  Serial.print("Free Memory: ");
+  Serial.print(F("Free Mem: "));
   Serial.println(freeRam());
 #endif  
 }

@@ -3,7 +3,6 @@
  *
  */
 
-
 //convert the first osc argument and return byte
 byte getFirstFloatArgument(OSCMessage *_mes) {
   return byte( _mes->getArgFloat(0)*255.f );
@@ -14,7 +13,7 @@ void oscCallbackSpeed(OSCMessage *_mes){
   oscDelay = byte( _mes->getArgFloat(0)*MAX_SLEEP_TIME );
 
 #ifdef USE_SERIAL_DEBUG
-  Serial.print("Speed:");
+  Serial.print(F("Speed:"));
   Serial.println(oscDelay, DEC);
 #endif 
 }
@@ -28,7 +27,7 @@ void oscCallbackChangeMode(OSCMessage *_mes){
   }
 
 #ifdef USE_SERIAL_DEBUG
-  Serial.print("Mode:");
+  Serial.print(F("Mode:"));
   Serial.println(oscMode, DEC);
 #endif 
 
@@ -45,7 +44,7 @@ void oscCallbackColorSet(OSCMessage *_mes){
     return;
   }
 #ifdef USE_SERIAL_DEBUG
-  Serial.print("ColorSet:");
+  Serial.print(F("ColorSet:"));
   Serial.println(oscColorSetNr, DEC);
 #endif 
 
@@ -65,7 +64,7 @@ void oscCallbackR(OSCMessage *_mes){
   updateStaticColor();
 
 #ifdef USE_SERIAL_DEBUG
-  Serial.print("R:");
+  Serial.print(F("R:"));
   Serial.println(oscR, DEC);
 #endif 
 }
@@ -77,7 +76,7 @@ void oscCallbackG(OSCMessage *_mes){
   updateStaticColor();
 
 #ifdef USE_SERIAL_DEBUG
-  Serial.print("G:");
+  Serial.print(F("G:"));
   Serial.println(oscG, DEC);
 #endif
 }
@@ -89,11 +88,12 @@ void oscCallbackB(OSCMessage *_mes){
   updateStaticColor();
 
 #ifdef USE_SERIAL_DEBUG
-  Serial.print("B:");
+  Serial.print(F("B:"));
   Serial.println(oscB, DEC);
 #endif  
 }
 
+#ifdef USE_WOL
 // WOL
 void oscCallbackWol(OSCMessage *_mes){
   //get length of the parameter
@@ -101,7 +101,7 @@ void oscCallbackWol(OSCMessage *_mes){
   //verify messagelength (12 chars / 6 bytes)
   if (strSize!=13) {
 #ifdef USE_SERIAL_DEBUG
-    Serial.print("WOL: Invalid parameter size ");
+    Serial.print(F("WOL: Invalid parameter size "));
     Serial.println(strSize, DEC);
 #endif  
     return;
@@ -112,7 +112,7 @@ void oscCallbackWol(OSCMessage *_mes){
   _mes->getArgString(0, tmpStr);
 
 #ifdef USE_SERIAL_DEBUG
-  Serial.print("WOL MAC: ");
+  Serial.print(F("WOL MAC:"));
   Serial.println(tmpStr);
 #endif  
 
@@ -127,24 +127,27 @@ void oscCallbackWol(OSCMessage *_mes){
 //  WOL(mac);
   SendWOLMagicPacket(mac);
 }
-
+#endif
 
 void oscCallbackPixel(OSCMessage *_mes){
   int16_t argCount = _mes->getArgsNum();
   if (argCount<5) {
 #ifdef USE_SERIAL_DEBUG
-    Serial.print("Invalid Parametercount: ");
+    Serial.print(F("Invalid Parametercount: "));
     Serial.println(argCount, DEC);
 #endif     
     return;
   }
+  
+  //reset counter, used to check if we should switch to sd playback
+  frame=0;
   
   //change mode to serverimage - else buffer would be overwritten!
   oscMode = MODE_SERVER_IMAGE;
   
   int32_t ofs = _mes->getArgInt32(0);
 #ifdef USE_SERIAL_DEBUG
-    Serial.print("OSC Update Pixel, offset: ");
+    Serial.print(F("OSC Update Pixel, offset: "));
     Serial.println(ofs, DEC);
 #endif     
   
@@ -153,7 +156,7 @@ void oscCallbackPixel(OSCMessage *_mes){
     int32_t col=_mes->getArgInt32(b+1);
     strip.setPixelColor(ofs+b, col);
 #ifdef USE_SERIAL_DEBUG
-    Serial.print("Set: ");
+    Serial.print(F("Set: "));
     Serial.println(col, HEX);
 #endif     
   }

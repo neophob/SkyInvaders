@@ -1,11 +1,10 @@
 
-unsigned long colorsetColors[3];
+uint32_t colorsetColors[3];
 
 //get array size
 #define nrOfColorsInArray (sizeof(colorsetColors)/sizeof(unsigned long)) 
 
-#define MAX_COLOR_MODE 10
-//byte colorMode = 0;
+#define MAX_COLOR_MODE 6
 
  byte boarderCount;
  byte arrayCount;
@@ -16,7 +15,7 @@ unsigned long colorsetColors[3];
 //----------------------------
 void initColorSet(unsigned long col[3]) {
 #ifdef USE_SERIAL_DEBUG
-  Serial.println("initColorSet");
+  Serial.println(F("initColorSet"));
 #endif 
   
   //copy array.. memcpy? never heard of it...
@@ -28,7 +27,7 @@ void initColorSet(unsigned long col[3]) {
   boarderCount = 255 / arrayCount;
 
 #ifdef USE_SERIAL_DEBUG
-  Serial.print("boarderCount: ");
+  Serial.print(F("boarderCount: "));
   Serial.println(boarderCount);
 #endif 
 }
@@ -104,7 +103,7 @@ void loadColorSet(byte colorMode) {
     initialColor[1] = 0x4f7a9a;
     initialColor[2] = 0xe6c84c;  
     break; 
-  case 6:
+/*  case 6:
     initialColor[0] = 0x323228;  //Neon
     initialColor[1] = 0x717155;
     initialColor[2] = 0xb4dc00;  
@@ -123,10 +122,10 @@ void loadColorSet(byte colorMode) {
     initialColor[0] = 0x3e3e3e;  //LeBron
     initialColor[1] = 0xd4b600;
     initialColor[2] = 0xffffff;  
-    break; 
+    break; */
   }
 #ifdef USE_SERIAL_DEBUG      
-  Serial.print("load new colorset: ");
+  Serial.print(F("load new colorset: "));
   Serial.println(colorMode);      
 #endif
   initColorSet(initialColor);
