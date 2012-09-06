@@ -129,6 +129,8 @@ void oscCallbackWol(OSCMessage *_mes){
 }
 #endif
 
+
+//update pixel via osc
 void oscCallbackPixel(OSCMessage *_mes){
   int16_t argCount = _mes->getArgsNum();
   if (argCount<5) {
@@ -159,7 +161,19 @@ void oscCallbackPixel(OSCMessage *_mes){
     Serial.print(F("Set: "));
     Serial.println(col, HEX);
 #endif     
-  }
+  } 
+}
+
+//send a ping osc message to the server with the name OSC_SERVER
+void sendOscPingToServer() {
+  //loacal_mes,str is release by out of scope
+  OSCMessage localMsg;
   
+  localMsg.setAddress(oscServerIp, serverPort);
+  localMsg.beginMessage("/ping");
+
+  //maybe add own ip?
+  
+  client.send(&localMsg);  
 }
 

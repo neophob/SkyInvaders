@@ -24,8 +24,8 @@
 //WOL needs 1164 bytes 
 #define USE_WOL 1
 
-//SD card needs 7778 bytes
-#define USE_SD
+//SD card needs 7778 bytes and is unfinished!
+//#define USE_SD
 
 //use DHCP server OR static IP, dhcp needs 3148 bytes
 #define USE_DHCP 1
@@ -37,6 +37,7 @@
 #include <avr/pgmspace.h>
 #include <SPI.h>
 #include <Ethernet.h>
+#include <Dns.h>
 
 #ifdef USE_SD
 #include <SD.h>
@@ -106,6 +107,14 @@ EthernetUDP Udp;
  **************/
 const int serverPort  = 10000;
 OSCServer oscServer;
+
+#define OSC_SERVER "192.168.111.21" 
+byte oscServerIp[]  = { 
+  0,0,0,0 };
+
+IPAddress serverIp;
+OSCClient client;
+OSCMessage globalMes;
 
 //change display mode, 3 modes: static color, color fade, serverimage
 #define OSC_MSG_MODE "/mode" 
@@ -232,6 +241,35 @@ void setup(){
 #endif
   oscServer.addCallback(OSC_MSG_UPDATE_PIXEL, &oscCallbackPixel); //PARAMETER: 2, int offset, 4xlong
 
+  //-------------------------------
+  //get ip from dns name
+  DNSClient dns;
+  
+  dns.begin(Ethernet.dnsServerIP());
+  int ret = dns.getHostByName(OSC_SERVER, serverIp);
+  if (ret == 1) {
+    Serial.print(F("DNS IP:"));
+    for (byte thisByte = 0; thisByte < 4; thisByte++) {
+      // print the value of each byte of the IP address:
+      Serial.print(serverIp[thisByte], DEC);
+
+      //get ip 
+      oscServerIp[thisByte] = serverIp[thisByte];
+      Serial.print("."); 
+    }
+    Serial.println();
+  
+  //dns osc client done
+
+    
+  } else {
+#ifdef USE_SERIAL_DEBUG
+  Serial.print(F("Failed to resolve hostname: "));
+  Serial.println(ret);
+#endif  
+  }
+  
+
   //init animation mode
   initAnimationMode();
 
@@ -276,7 +314,15 @@ void loop(){
     loopAnimationMode();
     strip.show();
     frame++;
-  }  
+    
+    if (frame%50000==1) {
+#ifdef USE_SERIAL_DEBUG
+  Serial.print(F("OSC Ping"));
+#endif        
+      sendOscPingToServer();
+    }
+  }
+  
 }
 
 
