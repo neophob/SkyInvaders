@@ -494,6 +494,9 @@ class OSCClient {
         if(is_object($message)) {
             $message = $message->get_binary();
         }
+
+        //TODO: implement encrypt packet here, send to registered nodes
+
         if(($ret = socket_sendto($this->sock, $message, strlen($message), 0, $this->address, $this->port)) < 0) {
             $this->error("Transmission failure.");
         }
