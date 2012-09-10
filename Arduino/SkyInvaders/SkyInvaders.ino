@@ -103,7 +103,10 @@ byte myMac[] = {
 EthernetUDP Udp;
 
 byte broadcastAddress[] = { 255, 255, 255, 255 }; 
-#define REMOTE_PORT 8080
+#define REMOTE_UDP_DEBUG_PORT 8080
+
+#define ARDUINO_LISTENING_ENCRYPTION_PORT 7999
+EthernetServer server(ARDUINO_LISTENING_ENCRYPTION_PORT);
 
 /**************
  * OSC
@@ -268,6 +271,9 @@ void setup(){
   //init animation mode
   initAnimationMode();
 
+  logDebugPrint("Init TCP Server on Port ");
+  logDebugPrintln(ARDUINO_LISTENING_ENCRYPTION_PORT, DEC);
+  
   //just to be sure!
   loadColorSet(0);
 
@@ -300,6 +306,9 @@ void loop(){
     //delay not finished yet - do not modify the strip but read network messages
     currentDelay--;
     delay(1);
+    
+    //get encrypted tcp traffic 
+    handleEncryptedTraffic();
   } 
   else {
     //delay finished, update the strip content

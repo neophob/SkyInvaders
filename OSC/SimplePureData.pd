@@ -17,15 +17,15 @@
 #X obj 395 3 cnv 15 140 180 empty empty RGB 20 12 0 14 -260097 -66577
 0;
 #X obj 420 44 vsl 15 128 0 1 0 0 empty empty empty 0 -9 0 10 -258113
--1 -1 6000 1;
+-1 -1 11700 1;
 #X obj 455 44 vsl 15 128 0 1 0 0 empty empty empty 0 -9 0 10 -4034
--1 -1 0 1;
+-1 -1 3800 1;
 #X obj 493 44 vsl 15 128 0 1 0 0 empty empty empty 0 -9 0 10 -4160
--1 -1 0 1;
+-1 -1 3100 1;
 #X obj 569 4 cnv 15 140 180 empty empty Speed 20 12 0 14 -260097 -66577
 0;
 #X obj 624 43 vsl 15 128 0 1 0 0 empty empty empty 0 -9 0 10 -128992
--1 -1 0 1;
+-1 -1 4200 1;
 #X msg 207 268 /sav;
 #X msg 26 59 connect 192.168.111.23 10000;
 #X msg 392 249 sendtyped /colr f \$1;
@@ -54,6 +54,9 @@
 ;
 #X msg 757 571 sendtyped /pxl iiiii 0x100 0xff00ff 0xff00ff 0xffffff
 0x000000;
+#X msg 23 405 connect 1.2.3.4 10000;
+#X msg 740 621 sendtyped /pxl iiiii 22 1.67119e+07 1.67119e+07 1.67119e+07
+1.67119e+07;
 #X connect 1 0 7 0;
 #X connect 3 0 21 0;
 #X connect 4 0 23 0;
@@ -83,3 +86,5 @@
 #X connect 37 0 8 0;
 #X connect 39 0 8 0;
 #X connect 40 0 8 0;
+#X connect 41 0 7 0;
+#X connect 42 0 8 0;

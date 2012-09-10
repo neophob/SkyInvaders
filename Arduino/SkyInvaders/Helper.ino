@@ -56,7 +56,7 @@ void logDebugPrint(const char s[]) {
   Serial.print(s);
 #endif
 
-  Udp.beginPacket(broadcastAddress, REMOTE_PORT); 
+  Udp.beginPacket(broadcastAddress, REMOTE_UDP_DEBUG_PORT); 
   Udp.write(s);
   Udp.endPacket();
 }
@@ -75,7 +75,7 @@ void logDebugPrint(unsigned long n, uint8_t base) {
   Serial.print(n, base);
 #endif
 
-  Udp.beginPacket(broadcastAddress, REMOTE_PORT); 
+  Udp.beginPacket(broadcastAddress, REMOTE_UDP_DEBUG_PORT); 
   Udp.write(n&255);
   Udp.endPacket();
 
