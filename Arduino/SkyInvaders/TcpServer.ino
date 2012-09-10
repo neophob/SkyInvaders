@@ -31,6 +31,20 @@ void handleEncryptedTraffic() {
     while (client.connected()) {
       if (client.available()) {
         //maybe read header from package
+        
+        //decrypt
+        
+        //redirect to OSC Port 
+        //OR
+        //handle OSC with lib direct
+        
+        uint8_t decryptedOscPacket[64];
+        
+        if (oscServer.processRawData(decryptedOscPacket) < 0) {
+          logDebugPrintln("Failed to parse OSC Message");
+        } else {
+          logDebugPrintln("Handled OSC Message");
+        }
       }  
     }
   }
