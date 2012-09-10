@@ -102,6 +102,9 @@ byte myMac[] = {
 
 EthernetUDP Udp;
 
+byte broadcastAddress[] = { 255, 255, 255, 255 }; 
+#define REMOTE_PORT 8080
+
 /**************
  * OSC
  **************/
@@ -178,11 +181,11 @@ void setup(){
   Serial.begin(115200);  
 
 #ifdef USE_WS2801
-  Serial.println(F("INV2801"));
+  logDebugPrint("INV2801");
   strip = WS2801(NR_OF_PIXELS, dataPin, clockPin);   
 #endif
 #ifdef USE_LPD8806
-  Serial.println(F("INV8806"));
+  logDebugPrint("INV8806");
   strip = LPD8806(NR_OF_PIXELS, dataPin, clockPin); 
 #endif    
 #endif
@@ -191,18 +194,14 @@ void setup(){
   strip.begin();
   strip.show();
 
-#ifdef USE_SERIAL_DEBUG
-  Serial.print(F("# Pixel:"));
-  Serial.println(NR_OF_PIXELS, DEC);
-#endif
+  logDebugPrint("# Pixel:");
+  logDebugPrint(NR_OF_PIXELS, DEC);
 
   //DHCP, hint: we cannot use DHCP and manual IP together, out of space!
 #ifdef USE_DHCP
   //start Ethernet library using dhcp
   if (Ethernet.begin(myMac) == 0) {
-#ifdef USE_SERIAL_DEBUG
-    Serial.println(F("No DHCP Server found"));
-#endif
+    logDebugPrint("No DHCP Server found");
     // no point in carrying on, so do nothing forevermore:
     for(;;)
       ;
@@ -212,20 +211,18 @@ void setup(){
   Ethernet.begin(myMac, myIp);
 #endif 
 
-#ifdef USE_WOL
+//#ifdef USE_WOL
     //init UDP, used for WOL
     Udp.begin(7);
-#endif
+//#endif
 
-#ifdef USE_SERIAL_DEBUG 
-  Serial.print(F("IP:"));
+  logDebugPrint("IP:");
   for (byte thisByte = 0; thisByte < 4; thisByte++) {
     // print the value of each byte of the IP address:
-    Serial.print(Ethernet.localIP()[thisByte], DEC);
-    Serial.print("."); 
+    logDebugPrint(Ethernet.localIP()[thisByte], DEC);
+    logDebugPrint(".");
   }
-  Serial.println();
-#endif
+  logDebugPrintln("");
 
   //start osc server
   oscServer.begin(serverPort);
@@ -248,25 +245,23 @@ void setup(){
   dns.begin(Ethernet.dnsServerIP());
   int ret = dns.getHostByName(OSC_SERVER, serverIp);
   if (ret == 1) {
-    Serial.print(F("DNS IP:"));
+    logDebugPrint("DNS IP:");
     for (byte thisByte = 0; thisByte < 4; thisByte++) {
       // print the value of each byte of the IP address:
-      Serial.print(serverIp[thisByte], DEC);
+      logDebugPrint(serverIp[thisByte], DEC);
 
       //get ip 
       oscServerIp[thisByte] = serverIp[thisByte];
-      Serial.print("."); 
+      logDebugPrint("."); 
     }
-    Serial.println();
+    logDebugPrintln("");
   
   //dns osc client done
 
     
   } else {
-#ifdef USE_SERIAL_DEBUG
-  Serial.print(F("Failed to resolve hostname: "));
-  Serial.println(ret);
-#endif  
+    logDebugPrint("Failed to resolve hostname: ");
+    logDebugPrintln(ret, DEC);
   }
   
 
@@ -284,10 +279,8 @@ void setup(){
   pinMode(ledPin, OUTPUT);  
   synchronousBlink();
 
-#ifdef USE_SERIAL_DEBUG
-  Serial.print(F("Free Mem: "));
-  Serial.println(freeRam());
-#endif  
+  logDebugPrint("Free Mem: ");
+  logDebugPrint(freeRam(), DEC);
 }
 
 
@@ -316,9 +309,7 @@ void loop(){
     frame++;
     
     if (frame%50000==1) {
-#ifdef USE_SERIAL_DEBUG
-  Serial.print(F("OSC Ping"));
-#endif        
+      logDebugPrintln("OSC Ping");
       sendOscPingToServer();
     }
   }

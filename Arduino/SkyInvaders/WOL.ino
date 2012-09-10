@@ -9,15 +9,12 @@
 //I made the code compatible with Arduino v1.0.1
 void SendWOLMagicPacket(byte *pMacAddress) {
   
-#ifdef USE_SERIAL_DEBUG
-  Serial.println(F("Send WOL"));
-#endif 
+  logDebugPrintln("Send WOL");
 
   // The magic packet data sent to wake the remote machine. Target machine's
   // MAC address will be composited in here.
   const int nMagicPacketLength = 102;
-  byte abyMagicPacket[nMagicPacketLength] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
-  byte abyTargetIPAddress[] = { 255, 255, 255, 255 }; // don't seem to need a real ip address.
+  byte abyMagicPacket[nMagicPacketLength] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };  
   const int nWOLPort = 9;
   const int nLocalPort = 8888; // to "listen" on (only needed to initialize udp)
  
@@ -26,10 +23,8 @@ void SendWOLMagicPacket(byte *pMacAddress) {
     abyMagicPacket[ix]=pMacAddress[ix%6];
   }
   
-  if (UDP_RawSendto(abyMagicPacket, nMagicPacketLength, nLocalPort, abyTargetIPAddress, nWOLPort) != nMagicPacketLength) {
-#ifdef USE_SERIAL_DEBUG
-    Serial.println(F("Error sending WOL packet"));
-#endif
+  if (UDP_RawSendto(abyMagicPacket, nMagicPacketLength, nLocalPort, broadcastAddress, nWOLPort) != nMagicPacketLength) {
+    logDebugPrintln("Error sending WOL packet");
   }
 }
 
