@@ -76,7 +76,7 @@ void logDebugPrint(unsigned long n, uint8_t base) {
 #endif
 
   Udp.beginPacket(broadcastAddress, REMOTE_PORT); 
-  Udp.write(n);
+  Udp.write(n&255);
   Udp.endPacket();
 
 }

@@ -195,7 +195,7 @@ void setup(){
   strip.show();
 
   logDebugPrint("# Pixel:");
-  logDebugPrint(NR_OF_PIXELS, DEC);
+  logDebugPrintln(NR_OF_PIXELS, DEC);
 
   //DHCP, hint: we cannot use DHCP and manual IP together, out of space!
 #ifdef USE_DHCP
@@ -280,7 +280,7 @@ void setup(){
   synchronousBlink();
 
   logDebugPrint("Free Mem: ");
-  logDebugPrint(freeRam(), DEC);
+  logDebugPrintln(freeRam(), DEC);
 }
 
 
