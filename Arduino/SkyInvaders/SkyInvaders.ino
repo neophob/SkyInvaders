@@ -27,7 +27,7 @@ Version 1.0 of the Arduino IDE introduced the F() syntax for storing strings in 
 // FEATURES
 
 //WOL needs 1164 bytes 
-//#define USE_WOL 1
+#define USE_WOL 1
 
 //use DHCP server OR static IP, dhcp needs 3148 bytes eeprom
 #define USE_DHCP 1
@@ -39,7 +39,7 @@ Version 1.0 of the Arduino IDE introduced the F() syntax for storing strings in 
 #define USE_OSC 1
 
 //enable the option to decrypt an encrypted OSC packet 46 bytes ram
-//#define USE_OSC_DECRYPTION 1
+#define USE_OSC_DECRYPTION 1
 
 
 
@@ -333,7 +333,8 @@ void setup(){
   Serial.print(F("Init TCP Server on Port "));
   Serial.println(ARDUINO_LISTENING_ENCRYPTION_PORT, DEC);
 #endif
-// TODO server.start 
+  decryptionServer.begin();
+  
 #endif
 
 

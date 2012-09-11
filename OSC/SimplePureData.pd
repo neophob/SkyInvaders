@@ -17,16 +17,15 @@
 #X obj 395 3 cnv 15 140 180 empty empty RGB 20 12 0 14 -260097 -66577
 0;
 #X obj 420 44 vsl 15 128 0 1 0 0 empty empty empty 0 -9 0 10 -258113
--1 -1 0 1;
+-1 -1 12700 1;
 #X obj 455 44 vsl 15 128 0 1 0 0 empty empty empty 0 -9 0 10 -4034
 -1 -1 0 1;
 #X obj 493 44 vsl 15 128 0 1 0 0 empty empty empty 0 -9 0 10 -4160
--1 -1 0 1;
+-1 -1 8600 1;
 #X obj 569 4 cnv 15 140 180 empty empty Speed 20 12 0 14 -260097 -66577
 0;
 #X obj 624 43 vsl 15 128 0 1 0 0 empty empty empty 0 -9 0 10 -128992
 -1 -1 0 1;
-#X msg 26 59 connect 192.168.111.23 10000;
 #X text 244 175 switch to mode 1;
 #X text 244 69 Mode: Static Color;
 #X text 244 123 Mode: ColorFade;
@@ -56,11 +55,12 @@
 #X msg 406 323 sendtyped /g f \$1;
 #X msg 784 316 sendtyped /cos f \$1;
 #X msg 624 296 sendtyped /spd f \$1;
+#X msg 26 59 connect 192.168.111.22 10000;
 #X connect 1 0 7 0;
-#X connect 3 0 37 0;
-#X connect 4 0 39 0;
-#X connect 5 0 38 0;
-#X connect 6 0 41 0;
+#X connect 3 0 36 0;
+#X connect 4 0 38 0;
+#X connect 5 0 37 0;
+#X connect 6 0 40 0;
 #X connect 8 0 7 0;
 #X connect 8 1 2 0;
 #X connect 10 0 11 0;
@@ -69,14 +69,14 @@
 #X connect 15 0 4 0;
 #X connect 16 0 5 0;
 #X connect 18 0 6 0;
-#X connect 19 0 7 0;
-#X connect 24 0 25 0;
-#X connect 25 0 40 0;
+#X connect 23 0 24 0;
+#X connect 24 0 39 0;
+#X connect 26 0 8 0;
 #X connect 27 0 8 0;
-#X connect 28 0 8 0;
+#X connect 29 0 8 0;
 #X connect 30 0 8 0;
-#X connect 31 0 8 0;
-#X connect 32 0 7 0;
+#X connect 31 0 7 0;
+#X connect 32 0 8 0;
 #X connect 33 0 8 0;
 #X connect 34 0 8 0;
 #X connect 35 0 8 0;
@@ -85,4 +85,4 @@
 #X connect 38 0 8 0;
 #X connect 39 0 8 0;
 #X connect 40 0 8 0;
-#X connect 41 0 8 0;
+#X connect 41 0 7 0;
