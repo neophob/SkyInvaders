@@ -28,7 +28,7 @@ void SendWOLMagicPacket(byte *pMacAddress) {
   
   if (UDP_RawSendto(abyMagicPacket, nMagicPacketLength, nLocalPort, broadcastAddress, nWOLPort) != nMagicPacketLength) {
     #ifdef USE_SERIAL_DEBUG
-      Serial.println("Error sending WOL packet");
+      Serial.println(F("Error sending WOL packet"));
     #endif          
   }
 }

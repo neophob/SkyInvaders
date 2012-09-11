@@ -19,6 +19,11 @@
  * 
  */
 
+
+/*
+Version 1.0 of the Arduino IDE introduced the F() syntax for storing strings in flash memory rather than RAM. e.g.
+*/
+
 // FEATURES
 
 //WOL needs 1164 bytes 
@@ -39,26 +44,7 @@
 //enable the option to decrypt an encrypted OSC packet
 //#define USE_OSC_DECRYPTION 1
 
-#include <avr/pgmspace.h>
-#include <SPI.h>
-#include <Ethernet.h>
-#include <Dns.h>
 
-#ifdef USE_SD
-#include <SD.h>
-#endif
-
-#ifdef USE_OSC
-//make sure you enabled strings (#define _USE_STRING_) in OSCcommon.h
-#include <ArdOSC.h>
-#endif
-
-//used as we need to send out raw socket stuff
-#ifdef USE_WOL
-#include <EthernetUdp.h>
-#include <utility/w5100.h>
-#include <utility/socket.h>
-#endif
 
 //default Pixels
 #define NR_OF_PIXELS 96
@@ -73,6 +59,29 @@
 // define strip hardware, use only ONE hardware type
 #define USE_WS2801 1
 //#define USE_LPD8806 1
+
+
+
+#include <SPI.h>
+#include <Ethernet.h>
+
+#ifdef USE_SD
+#include <SD.h>
+#endif
+
+#ifdef USE_OSC
+//make sure you enabled strings (#define _USE_STRING_) in OSCcommon.h
+#include <ArdOSC.h>
+//#include <Dns.h>
+#endif
+
+//used as we need to send out raw socket stuff
+#ifdef USE_WOL
+#include <EthernetUdp.h>
+#include <utility/w5100.h>
+#include <utility/socket.h>
+#endif
+
 
 #ifdef USE_WS2801
   #include <WS2801.h>
@@ -124,8 +133,7 @@ byte oscServerIp[]  = {
   0,0,0,0 };
 
 IPAddress serverIp;
-OSCClient client;
-OSCMessage globalMes;
+//OSCClient client; //TODO ADDME
 
 #ifdef USE_OSC_DECRYPTION
 #define ARDUINO_LISTENING_ENCRYPTION_PORT 7999
@@ -202,20 +210,20 @@ void setup(){
 
 #ifdef USE_WS2801
   #ifdef USE_SERIAL_DEBUG
-    Serial.println("WS2801");
+    Serial.println(F("WS2801"));
   #endif
   strip = WS2801(NR_OF_PIXELS, dataPin, clockPin);   
 #endif
 
 #ifdef USE_LPD8806
   #ifdef USE_SERIAL_DEBUG
-    Serial.println("INV8806");
+    Serial.println(F("INV8806"));
   #endif
   strip = LPD8806(NR_OF_PIXELS, dataPin, clockPin); 
 #endif
 
   #ifdef USE_SERIAL_DEBUG
-    Serial.print("# Pixel: ");
+    Serial.print(F("# Pixel: "));
     Serial.println(NR_OF_PIXELS, DEC);
   #endif
 
@@ -224,13 +232,13 @@ void setup(){
 #ifdef USE_DHCP
 
   #ifdef USE_SERIAL_DEBUG
-    Serial.println("Use DHCP");
+    Serial.println(F("Use DHCP"));
   #endif
 
   //start Ethernet library using dhcp
   if (Ethernet.begin(myMac) == 0) {
     #ifdef USE_SERIAL_DEBUG
-      Serial.println("No DHCP Server found");
+      Serial.println(F("No DHCP Server found"));
     #endif
     // no point in carrying on, so do nothing forevermore:
     for(;;);
@@ -239,7 +247,7 @@ void setup(){
 // --manual ip-------------------------------------
 
   #ifdef USE_SERIAL_DEBUG
-    Serial.println("Use Manual IP");
+    Serial.println(F("Use Manual IP"));
   #endif
 
   //Manual IP
@@ -248,7 +256,7 @@ void setup(){
 
 
 #ifdef USE_SERIAL_DEBUG
-  Serial.print("IP: ");
+  Serial.print(F("IP: "));
   for (byte thisByte = 0; thisByte < 4; thisByte++) {
     // print the value of each byte of the IP address:
     Serial.print(Ethernet.localIP()[thisByte], DEC);
@@ -258,6 +266,7 @@ void setup(){
 #endif
 
 // --dns-------------------------------------
+/*
 #ifdef USE_OSC
   //get ip from dns name, used to find osc server
   DNSClient dns;
@@ -287,12 +296,12 @@ void setup(){
     Serial.println(ret, DEC);
 #endif    
   }
-#endif
+#endif*/
 
 
 // --led strip-------------------------------------
 #ifdef USE_SERIAL_DEBUG    
-    Serial.println("Start LED Strip");
+    Serial.println(F("Start LED Strip"));
 #endif
   //start strips 
   strip.begin();
@@ -303,7 +312,7 @@ void setup(){
 
 #ifdef USE_WOL
     #ifdef USE_SERIAL_DEBUG    
-        Serial.println("Start UDP Server");
+        Serial.println(F("Start UDP Server"));
     #endif
     
     //init UDP, used for WOL
@@ -314,7 +323,7 @@ void setup(){
 #ifdef USE_OSC
 
 #ifdef USE_SERIAL_DEBUG    
-    Serial.println("Start OSC Server");
+    Serial.println(F("Start OSC Server"));
 #endif
 
   //start osc server
@@ -333,10 +342,10 @@ void setup(){
 
 #ifdef USE_OSC_DECRYPTION
 #ifdef USE_SERIAL_DEBUG
-  Serial.print("Init TCP Server on Port ");
+  Serial.print(F("Init TCP Server on Port "));
   Serial.println(ARDUINO_LISTENING_ENCRYPTION_PORT, DEC);
 #endif
-//  server.start
+// TODO server.start 
 #endif
 
 
@@ -359,7 +368,7 @@ void setup(){
   synchronousBlink();
 
 #ifdef USE_SERIAL_DEBUG
-  Serial.print("Free Mem: ");
+  Serial.print(F("Free Mem: "));
   Serial.println(freeRam(), DEC);
 #endif  
 }

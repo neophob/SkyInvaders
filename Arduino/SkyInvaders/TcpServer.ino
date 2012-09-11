@@ -52,11 +52,11 @@ void handleEncryptedTraffic() {
         
         if (oscServer.processRawData(encryptedOscPacket) < 0) {
           #ifdef USE_SERIAL_DEBUG
-            Serial.println("Failed to parse OSC Message");
+            Serial.println(F("Failed to parse OSC Message"));
           #endif          
         } else {
           #ifdef USE_SERIAL_DEBUG
-            Serial.println("Handled OSC Message");
+            Serial.println(F("Handled OSC Message"));
           #endif          
         }
       }  
