@@ -34,6 +34,7 @@ byte xdigit( char digit ){
   return val;
 }
 
+#ifdef USE_SERIAL_DEBUG 
 
 int freeRam() {
   extern int __heap_start, *__brkval; 
@@ -41,44 +42,6 @@ int freeRam() {
   return (int) &v - (__brkval == 0 ? (int) &__heap_start : (int) __brkval); 
 }
 
-
-// --------------------------- Debug
-void logDebugPrintln(const char s[]) {
-  logDebugPrint(s);
-#ifdef USE_SERIAL_DEBUG 
-  Serial.println();
 #endif
-}
-
-
-void logDebugPrint(const char s[]) {
-#ifdef USE_SERIAL_DEBUG 
-  Serial.print(s);
-#endif
-
-  Udp.beginPacket(broadcastAddress, REMOTE_UDP_DEBUG_PORT); 
-  Udp.write(s);
-  Udp.endPacket();
-}
-
-
-void logDebugPrintln(unsigned long n, uint8_t base) {
-  logDebugPrint(n, base);
-#ifdef USE_SERIAL_DEBUG 
-  Serial.println();
-#endif
-}
-
-
-void logDebugPrint(unsigned long n, uint8_t base) {
-#ifdef USE_SERIAL_DEBUG 
-  Serial.print(n, base);
-#endif
-
-  Udp.beginPacket(broadcastAddress, REMOTE_UDP_DEBUG_PORT); 
-  Udp.write(n&255);
-  Udp.endPacket();
-
-}
 
 

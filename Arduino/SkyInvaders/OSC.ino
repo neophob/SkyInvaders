@@ -1,7 +1,11 @@
+
+#ifdef USE_OSC    
+
 /**************** 
  * OSC Callbacks
  *
  */
+ 
 
 //convert the first osc argument and return byte
 byte getFirstFloatArgument(OSCMessage *_mes) {
@@ -12,8 +16,11 @@ byte getFirstFloatArgument(OSCMessage *_mes) {
 void oscCallbackSpeed(OSCMessage *_mes){
   oscDelay = byte( _mes->getArgFloat(0)*MAX_SLEEP_TIME );
 
-  logDebugPrint("Speed:");
-  logDebugPrintln(oscDelay, DEC);
+#ifdef USE_SERIAL_DEBUG
+  Serial.print("Speed: ");
+  Serial.println(oscDelay, DEC);
+#endif
+  
 }
 
 
@@ -24,8 +31,10 @@ void oscCallbackChangeMode(OSCMessage *_mes){
     return;
   }
 
-  logDebugPrint("Mode:");
-  logDebugPrintln(oscMode, DEC);
+#ifdef USE_SERIAL_DEBUG
+  Serial.print("Mode: ");
+  Serial.println(oscMode, DEC);
+#endif
 
   if (arg!=oscMode) {
     oscMode=arg;
@@ -40,8 +49,10 @@ void oscCallbackColorSet(OSCMessage *_mes){
     return;
   }
 
-  logDebugPrint("ColorSet:");
-  logDebugPrintln(oscColorSetNr, DEC);
+#ifdef USE_SERIAL_DEBUG
+  Serial.print("ColorSet: ");
+  Serial.println(oscColorSetNr, DEC);
+#endif
 
   //only if value change, load new colorset
   if (arg!=oscColorSetNr) {
@@ -58,8 +69,11 @@ void oscCallbackR(OSCMessage *_mes){
   oscR = getFirstFloatArgument(_mes);
   updateStaticColor();
 
-  logDebugPrint("R:");
-  logDebugPrintln(oscR, DEC);
+#ifdef USE_SERIAL_DEBUG
+  Serial.print("R: ");
+  Serial.println(oscR, DEC);
+#endif
+
 }
 
 
@@ -68,8 +82,10 @@ void oscCallbackG(OSCMessage *_mes){
   oscG = getFirstFloatArgument(_mes);
   updateStaticColor();
 
-  logDebugPrint("G:");
-  logDebugPrintln(oscG, DEC);
+#ifdef USE_SERIAL_DEBUG
+  Serial.print("G: ");
+  Serial.println(oscG, DEC);
+#endif
 }
 
 
@@ -78,8 +94,11 @@ void oscCallbackB(OSCMessage *_mes){
   oscB = getFirstFloatArgument(_mes);
   updateStaticColor();
 
-  logDebugPrint("B:");
-  logDebugPrintln(oscB, DEC);
+#ifdef USE_SERIAL_DEBUG
+  Serial.print("B: ");
+  Serial.println(oscB, DEC);
+#endif
+
 }
 
 #ifdef USE_WOL
@@ -90,8 +109,10 @@ void oscCallbackWol(OSCMessage *_mes){
   //verify messagelength (12 chars / 6 bytes)
   if (strSize!=13) {
 
-    logDebugPrint("WOL: Invalid parameter size ");
-    logDebugPrintln(strSize, DEC);
+#ifdef USE_SERIAL_DEBUG
+  Serial.print("WOL: Invalid parameter size ");
+  Serial.println(strSize, DEC);
+#endif
 
     return;
   }
@@ -100,8 +121,10 @@ void oscCallbackWol(OSCMessage *_mes){
   char tmpStr[12]; //string memory allocation
   _mes->getArgString(0, tmpStr);
 
-  logDebugPrint("WOL MAC:");
-  logDebugPrintln(tmpStr);
+#ifdef USE_SERIAL_DEBUG
+  Serial.print("WOL MAC");
+  Serial.println(tmpStr);
+#endif
 
   //now convert the 12byte chars ('d','e','a','d',...) to 6byte byte (0xde,0ad,...) array
   byte mac[6];
@@ -122,8 +145,10 @@ void oscCallbackPixel(OSCMessage *_mes){
   int16_t argCount = _mes->getArgsNum();
   if (argCount<5) {
 
-    logDebugPrint("Invalid Parametercount: ");
-    logDebugPrintln(argCount, DEC);
+#ifdef USE_SERIAL_DEBUG
+  Serial.print("Invalid Parametercount: ");
+  Serial.println(argCount, DEC);
+#endif
 
     return;
   }
@@ -136,17 +161,21 @@ void oscCallbackPixel(OSCMessage *_mes){
   
   int32_t ofs = _mes->getArgInt32(0);
 
-  logDebugPrint("OSC Update Pixel, offset: ");
-  logDebugPrintln(ofs, DEC);
+#ifdef USE_SERIAL_DEBUG
+  Serial.print("OSC Update Pixel, offset: ");
+  Serial.println(ofs, DEC);
+#endif
   
   //get 4 colors from osc message
   for (byte b=0; b<4; b++) {
     int32_t col=_mes->getArgInt32(b+1);
     strip.setPixelColor(ofs+b, col);
 
-    logDebugPrint("Set: ");
-    logDebugPrintln(col, HEX);
-    
+#ifdef USE_SERIAL_DEBUG
+  Serial.print("Set: ");
+  Serial.println(col, DEC);
+#endif
+
   } 
 }
 
@@ -162,4 +191,6 @@ void sendOscPingToServer() {
   
   client.send(&localMsg);  
 }
+
+#endif
 

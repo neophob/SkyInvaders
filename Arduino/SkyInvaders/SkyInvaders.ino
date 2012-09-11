@@ -22,17 +22,18 @@
 // FEATURES
 
 //WOL needs 1164 bytes 
-#define USE_WOL 1
+//#define USE_WOL 1
 
 //SD card needs 7778 bytes and is unfinished!
 //#define USE_SD
 
 //use DHCP server OR static IP, dhcp needs 3148 bytes
-#define USE_DHCP 1
+//#define USE_DHCP 1
 
 //use serial debug or not, needs 3836 bytes
 #define USE_SERIAL_DEBUG 1
 
+//#define USE_OSC 1
 
 #include <avr/pgmspace.h>
 #include <SPI.h>
@@ -43,8 +44,10 @@
 #include <SD.h>
 #endif
 
+#ifdef USE_OSC
 //make sure you enabled strings (#define _USE_STRING_) in OSCcommon.h
 #include <ArdOSC.h>
+#endif
 
 //used as we need to send out raw socket stuff
 #ifdef USE_WOL
@@ -94,7 +97,7 @@ LPD8806 strip = LPD8806();
  **************/
 #ifndef USE_DHCP
 byte myIp[]  = { 
-  192, 168, 1, 111 };
+  192, 168, 111, 177 };
 #endif
 
 byte myMac[] = { 
@@ -111,16 +114,22 @@ EthernetServer server(ARDUINO_LISTENING_ENCRYPTION_PORT);
 /**************
  * OSC
  **************/
+#ifdef USE_OSC
+
 const int serverPort  = 10000;
 OSCServer oscServer;
 
-#define OSC_SERVER "192.168.111.21" 
 byte oscServerIp[]  = { 
   0,0,0,0 };
 
 IPAddress serverIp;
 OSCClient client;
 OSCMessage globalMes;
+
+#endif 
+
+//TODO changeme
+#define OSC_SERVER "192.168.111.21" 
 
 //change display mode, 3 modes: static color, color fade, serverimage
 #define OSC_MSG_MODE "/mode" 
@@ -182,50 +191,126 @@ void setup(){
 
 #ifdef USE_SERIAL_DEBUG
   Serial.begin(115200);  
+#endif
+
+// --init strip-------------------------------------
 
 #ifdef USE_WS2801
-  logDebugPrint("INV2801");
+  #ifdef USE_SERIAL_DEBUG
+    Serial.println("WS2801");
+  #endif
   strip = WS2801(NR_OF_PIXELS, dataPin, clockPin);   
 #endif
+
 #ifdef USE_LPD8806
-  logDebugPrint("INV8806");
+  #ifdef USE_SERIAL_DEBUG
+    Serial.println("INV8806");
+  #endif
   strip = LPD8806(NR_OF_PIXELS, dataPin, clockPin); 
-#endif    
 #endif
 
-  //ws2801 start strips 
-  strip.begin();
-  strip.show();
+  #ifdef USE_SERIAL_DEBUG
+    Serial.print("# Pixel: ");
+    Serial.println(NR_OF_PIXELS, DEC);
+  #endif
 
-  logDebugPrint("# Pixel:");
-  logDebugPrintln(NR_OF_PIXELS, DEC);
 
-  //DHCP, hint: we cannot use DHCP and manual IP together, out of space!
+// --DHCP-------------------------------------
 #ifdef USE_DHCP
+
+  #ifdef USE_SERIAL_DEBUG
+    Serial.println("Use DHCP");
+  #endif
+
   //start Ethernet library using dhcp
   if (Ethernet.begin(myMac) == 0) {
-    logDebugPrint("No DHCP Server found");
+    #ifdef USE_SERIAL_DEBUG
+      Serial.println("No DHCP Server found");
+    #endif
     // no point in carrying on, so do nothing forevermore:
-    for(;;)
-      ;
+    for(;;);
   }
 #else
+// --manual ip-------------------------------------
+
+  #ifdef USE_SERIAL_DEBUG
+    Serial.println("Use Manual IP");
+  #endif
+
   //Manual IP
   Ethernet.begin(myMac, myIp);
 #endif 
 
-//#ifdef USE_WOL
-    //init UDP, used for WOL
-    Udp.begin(7);
-//#endif
 
-  logDebugPrint("IP:");
+#ifdef USE_SERIAL_DEBUG
+  Serial.print("IP: ");
   for (byte thisByte = 0; thisByte < 4; thisByte++) {
     // print the value of each byte of the IP address:
-    logDebugPrint(Ethernet.localIP()[thisByte], DEC);
-    logDebugPrint(".");
+    Serial.print(Ethernet.localIP()[thisByte], DEC);
+    Serial.print(".");
   }
-  logDebugPrintln("");
+  Serial.println();
+#endif
+
+// --dns-------------------------------------
+#ifdef USE_OSC
+  //get ip from dns name, used to find osc server
+  DNSClient dns;
+  
+  dns.begin(Ethernet.dnsServerIP());
+  int ret = dns.getHostByName(OSC_SERVER, serverIp);
+  if (ret == 1) {
+    
+#ifdef USE_SERIAL_DEBUG
+    Serial.print("DNS IP:");
+    for (byte thisByte = 0; thisByte < 4; thisByte++) {
+      // print the value of each byte of the IP address:
+      Serial.print(serverIp[thisByte], DEC);
+
+      //get ip 
+      oscServerIp[thisByte] = serverIp[thisByte];
+      Serial.print("."); 
+    }
+    Serial.println();
+ #endif 
+  //dns osc client done
+
+    
+  } else {
+#ifdef USE_SERIAL_DEBUG    
+    Serial.print("Failed to resolve hostname: ");
+    Serial.println(ret, DEC);
+#endif    
+  }
+#endif
+
+
+// --led strip-------------------------------------
+#ifdef USE_SERIAL_DEBUG    
+    Serial.println("Start LED Strip");
+#endif
+  //start strips 
+  strip.begin();
+  strip.show();
+
+
+// --start udp server-------------------------------------
+
+#ifdef USE_WOL
+    #ifdef USE_SERIAL_DEBUG    
+        Serial.println("Start UDP Server");
+    #endif
+    
+    //init UDP, used for WOL
+    Udp.begin(7);
+#endif
+
+// --start osc server-------------------------------------
+#ifdef USE_OSC
+
+#ifdef USE_SERIAL_DEBUG    
+    Serial.println("Start OSC Server");
+#endif
 
   //start osc server
   oscServer.begin(serverPort);
@@ -240,42 +325,22 @@ void setup(){
   oscServer.addCallback(OSC_MSG_WOL, &oscCallbackWol); //PARAMETER: 1, float value 0..1  
 #endif
   oscServer.addCallback(OSC_MSG_UPDATE_PIXEL, &oscCallbackPixel); //PARAMETER: 2, int offset, 4xlong
+#endif
+// --start animation mode-------------------------------------
 
-  //-------------------------------
-  //get ip from dns name
-  DNSClient dns;
-  
-  dns.begin(Ethernet.dnsServerIP());
-  int ret = dns.getHostByName(OSC_SERVER, serverIp);
-  if (ret == 1) {
-    logDebugPrint("DNS IP:");
-    for (byte thisByte = 0; thisByte < 4; thisByte++) {
-      // print the value of each byte of the IP address:
-      logDebugPrint(serverIp[thisByte], DEC);
-
-      //get ip 
-      oscServerIp[thisByte] = serverIp[thisByte];
-      logDebugPrint("."); 
-    }
-    logDebugPrintln("");
-  
-  //dns osc client done
-
-    
-  } else {
-    logDebugPrint("Failed to resolve hostname: ");
-    logDebugPrintln(ret, DEC);
-  }
-  
-
+  //just to be sure!
+  loadColorSet(0);
   //init animation mode
   initAnimationMode();
 
-  logDebugPrint("Init TCP Server on Port ");
-  logDebugPrintln(ARDUINO_LISTENING_ENCRYPTION_PORT, DEC);
+#ifdef USE_SERIAL_DEBUG
+  Serial.print("Init TCP Server on Port ");
+  Serial.println(ARDUINO_LISTENING_ENCRYPTION_PORT, DEC);
   
-  //just to be sure!
-  loadColorSet(0);
+//  server.start
+#endif
+
+// --sd-------------------------------------
 
 #ifdef USE_SD
   initSdCardInformation();
@@ -285,8 +350,10 @@ void setup(){
   pinMode(ledPin, OUTPUT);  
   synchronousBlink();
 
-  logDebugPrint("Free Mem: ");
-  logDebugPrintln(freeRam(), DEC);
+#ifdef USE_SERIAL_DEBUG
+  Serial.print("Free Mem: ");
+  Serial.println(freeRam(), DEC);
+#endif  
 }
 
 
@@ -296,10 +363,11 @@ void setup(){
  * LOOP
  **************/
 void loop(){  
-
+#ifdef USE_OSC
   if (oscServer.aviableCheck()>0){
     //we need to call available check to update the osc server
   }
+#endif
 
   //check if the effect should be updated or not
   if (currentDelay>0) {
@@ -307,8 +375,10 @@ void loop(){
     currentDelay--;
     delay(1);
     
+#ifdef USE_OSC    
     //get encrypted tcp traffic 
     handleEncryptedTraffic();
+#endif
   } 
   else {
     //delay finished, update the strip content
@@ -317,10 +387,15 @@ void loop(){
     strip.show();
     frame++;
     
+#ifdef USE_OSC    
     if (frame%50000==1) {
-      logDebugPrintln("OSC Ping");
+#ifdef USE_SERIAL_DEBUG
+  Serial.println("OSC Ping");
+#endif  
       sendOscPingToServer();
     }
+#endif
+
   }
   
 }

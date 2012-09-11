@@ -22,7 +22,9 @@ sendtyped /pxl iiiii 22 16711935 16711935 16711935 16711935
 
 
 */
+#ifdef USE_OSC
 
+#define SIZE_ENCRYPTED_PACKAGE 80
 
 void handleEncryptedTraffic() {
   EthernetClient client = server.available();
@@ -31,22 +33,34 @@ void handleEncryptedTraffic() {
     while (client.connected()) {
       if (client.available()) {
         //maybe read header from package
+                
+        uint8_t encryptedOscPacket[SIZE_ENCRYPTED_PACKAGE];
+        int readBytesFromLan = client.read(encryptedOscPacket, SIZE_ENCRYPTED_PACKAGE);
+        if (readBytesFromLan < 0) {
+           //nothing recieved
+           return; 
+        }
         
-        //decrypt
+        //TODO make method out of this
+        //-- Start decrypt
+        for (uint8_t n=0; n<readBytesFromLan; n++) {
+           encryptedOscPacket[n] = encryptedOscPacket[n]^12;
+        }
+        //-- End decrypt
         
-        //redirect to OSC Port 
-        //OR
-        //handle OSC with lib direct
-        
-        uint8_t decryptedOscPacket[64];
-        
-        if (oscServer.processRawData(decryptedOscPacket) < 0) {
-          logDebugPrintln("Failed to parse OSC Message");
+        if (oscServer.processRawData(encryptedOscPacket) < 0) {
+          #ifdef USE_SERIAL_DEBUG
+            Serial.println("Failed to parse OSC Message");
+          #endif          
         } else {
-          logDebugPrintln("Handled OSC Message");
+          #ifdef USE_SERIAL_DEBUG
+            Serial.println("Handled OSC Message");
+          #endif          
         }
       }  
     }
   }
   
 }
+
+#endif

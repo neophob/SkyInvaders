@@ -14,8 +14,10 @@ uint32_t colorsetColors[3];
 //init color set
 //----------------------------
 void initColorSet(unsigned long col[3]) {
-  logDebugPrintln("initColorSet");
-  
+#ifdef USE_SERIAL_DEBUG
+  Serial.println("initColorSet");
+#endif
+
   //copy array.. memcpy? never heard of it...
   for (byte b=0; b<3; b++) {
     colorsetColors[b] = col[b];
@@ -24,8 +26,11 @@ void initColorSet(unsigned long col[3]) {
   arrayCount = nrOfColorsInArray;
   boarderCount = 255 / arrayCount;
 
-  logDebugPrint("boarderCount: ");
-  logDebugPrintln(boarderCount, DEC);
+#ifdef USE_SERIAL_DEBUG
+  Serial.print("boarderCount: ");
+  Serial.println(boarderCount, DEC);
+#endif
+
 }
 
 //----------------------------
@@ -121,8 +126,10 @@ void loadColorSet(byte colorMode) {
     break; */
   }
 
-  logDebugPrint("load new colorset: ");
-  logDebugPrintln(colorMode, DEC);      
+#ifdef USE_SERIAL_DEBUG
+  Serial.print("load new colorset: ");
+  Serial.println(colorMode, DEC);
+#endif
 
   initColorSet(initialColor);
 }
