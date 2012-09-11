@@ -33,7 +33,11 @@
 //use serial debug or not, needs 3836 bytes
 #define USE_SERIAL_DEBUG 1
 
-//#define USE_OSC 1
+//enable basic osc server
+#define USE_OSC 1
+
+//enable the option to decrypt an encrypted OSC packet
+//#define USE_OSC_DECRYPTION 1
 
 #include <avr/pgmspace.h>
 #include <SPI.h>
@@ -123,10 +127,10 @@ IPAddress serverIp;
 OSCClient client;
 OSCMessage globalMes;
 
+#ifdef USE_OSC_DECRYPTION
 #define ARDUINO_LISTENING_ENCRYPTION_PORT 7999
-EthernetServer server(ARDUINO_LISTENING_ENCRYPTION_PORT);
-
-#endif 
+EthernetServer decryptionServer(ARDUINO_LISTENING_ENCRYPTION_PORT);
+#endif
 
 //TODO changeme
 #define OSC_SERVER "192.168.111.21" 
@@ -147,6 +151,7 @@ EthernetServer server(ARDUINO_LISTENING_ENCRYPTION_PORT);
 #define OSC_MSG_WOL "/wol" 
 
 #define OSC_MSG_UPDATE_PIXEL "/pxl" 
+#endif 
 
 /**************
  * SD CARD
@@ -326,12 +331,14 @@ void setup(){
 #endif
   oscServer.addCallback(OSC_MSG_UPDATE_PIXEL, &oscCallbackPixel); //PARAMETER: 2, int offset, 4xlong
 
+#ifdef USE_OSC_DECRYPTION
 #ifdef USE_SERIAL_DEBUG
   Serial.print("Init TCP Server on Port ");
   Serial.println(ARDUINO_LISTENING_ENCRYPTION_PORT, DEC);
-  
+#endif
 //  server.start
 #endif
+
 
 #endif
 // --start animation mode-------------------------------------
@@ -376,9 +383,11 @@ void loop(){
     currentDelay--;
     delay(1);
     
-#ifdef USE_OSC    
+#ifdef USE_OSC
+#ifdef USE_OSC_DECRYPTION
     //get encrypted tcp traffic 
     handleEncryptedTraffic();
+#endif
 #endif
   } 
   else {

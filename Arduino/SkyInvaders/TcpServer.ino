@@ -24,10 +24,12 @@ sendtyped /pxl iiiii 22 16711935 16711935 16711935 16711935
 */
 #ifdef USE_OSC
 
+#ifdef USE_OSC_DECRYPTION
+
 #define SIZE_ENCRYPTED_PACKAGE 80
 
 void handleEncryptedTraffic() {
-  EthernetClient client = server.available();
+  EthernetClient client = decryptionServer.available();
   if (client) {
     
     while (client.connected()) {
@@ -63,4 +65,5 @@ void handleEncryptedTraffic() {
   
 }
 
+#endif
 #endif
