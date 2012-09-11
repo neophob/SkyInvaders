@@ -28,7 +28,7 @@
 //#define USE_SD
 
 //use DHCP server OR static IP, dhcp needs 3148 bytes
-//#define USE_DHCP 1
+#define USE_DHCP 1
 
 //use serial debug or not, needs 3836 bytes
 #define USE_SERIAL_DEBUG 1
@@ -103,13 +103,10 @@ byte myIp[]  = {
 byte myMac[] = { 
   0xde, 0xad, 0xbe, 0xef, 0xbe, 0x01 };
 
+#ifdef USE_WOL
 EthernetUDP Udp;
+#endif
 
-byte broadcastAddress[] = { 255, 255, 255, 255 }; 
-#define REMOTE_UDP_DEBUG_PORT 8080
-
-#define ARDUINO_LISTENING_ENCRYPTION_PORT 7999
-EthernetServer server(ARDUINO_LISTENING_ENCRYPTION_PORT);
 
 /**************
  * OSC
@@ -125,6 +122,9 @@ byte oscServerIp[]  = {
 IPAddress serverIp;
 OSCClient client;
 OSCMessage globalMes;
+
+#define ARDUINO_LISTENING_ENCRYPTION_PORT 7999
+EthernetServer server(ARDUINO_LISTENING_ENCRYPTION_PORT);
 
 #endif 
 
@@ -325,13 +325,6 @@ void setup(){
   oscServer.addCallback(OSC_MSG_WOL, &oscCallbackWol); //PARAMETER: 1, float value 0..1  
 #endif
   oscServer.addCallback(OSC_MSG_UPDATE_PIXEL, &oscCallbackPixel); //PARAMETER: 2, int offset, 4xlong
-#endif
-// --start animation mode-------------------------------------
-
-  //just to be sure!
-  loadColorSet(0);
-  //init animation mode
-  initAnimationMode();
 
 #ifdef USE_SERIAL_DEBUG
   Serial.print("Init TCP Server on Port ");
@@ -339,6 +332,14 @@ void setup(){
   
 //  server.start
 #endif
+
+#endif
+// --start animation mode-------------------------------------
+
+  //just to be sure!
+  loadColorSet(0);
+  //init animation mode
+  initAnimationMode();
 
 // --sd-------------------------------------
 

@@ -16,6 +16,7 @@ void SendWOLMagicPacket(byte *pMacAddress) {
   // The magic packet data sent to wake the remote machine. Target machine's
   // MAC address will be composited in here.
   const int nMagicPacketLength = 102;
+  byte broadcastAddress[] = { 255, 255, 255, 255 }; 
   byte abyMagicPacket[nMagicPacketLength] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };  
   const int nWOLPort = 9;
   const int nLocalPort = 8888; // to "listen" on (only needed to initialize udp)
