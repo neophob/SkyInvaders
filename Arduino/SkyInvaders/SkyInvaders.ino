@@ -29,10 +29,7 @@ Version 1.0 of the Arduino IDE introduced the F() syntax for storing strings in 
 //WOL needs 1164 bytes 
 //#define USE_WOL 1
 
-//SD card needs 7778 bytes and is unfinished!
-//#define USE_SD
-
-//use DHCP server OR static IP, dhcp needs 3148 bytes eeprom, 243 free 
+//use DHCP server OR static IP, dhcp needs 3148 bytes eeprom
 #define USE_DHCP 1
 
 //use serial debug or not, needs 3836 bytes
@@ -47,8 +44,7 @@ Version 1.0 of the Arduino IDE introduced the F() syntax for storing strings in 
 
 
 //default Pixels
-#define NR_OF_PIXELS 96
-//160
+#define NR_OF_PIXELS 160
 
 // maximal sleep time for the color animation
 #define MAX_SLEEP_TIME 250.0f
@@ -60,14 +56,12 @@ Version 1.0 of the Arduino IDE introduced the F() syntax for storing strings in 
 #define USE_WS2801 1
 //#define USE_LPD8806 1
 
+//TODO changeme
+#define OSC_SERVER "192.168.111.21" 
 
 
 #include <SPI.h>
 #include <Ethernet.h>
-
-#ifdef USE_SD
-#include <SD.h>
-#endif
 
 #ifdef USE_OSC
 //make sure you enabled strings (#define _USE_STRING_) in OSCcommon.h
@@ -140,9 +134,6 @@ IPAddress serverIp;
 EthernetServer decryptionServer(ARDUINO_LISTENING_ENCRYPTION_PORT);
 #endif
 
-//TODO changeme
-#define OSC_SERVER "192.168.111.21" 
-
 //change display mode, 3 modes: static color, color fade, serverimage
 #define OSC_MSG_MODE "/mod" 
 
@@ -161,12 +152,6 @@ EthernetServer decryptionServer(ARDUINO_LISTENING_ENCRYPTION_PORT);
 #define OSC_MSG_UPDATE_PIXEL "/pxl" 
 #endif 
 
-/**************
- * SD CARD
- **************/
-#ifdef USE_SD
-File sdFileRead;
-#endif
 
 /**************
  * BUSINESS LOGIC
@@ -263,7 +248,7 @@ void setup(){
   for (byte i = 0; i < 4; i++) {
     // print the value of each byte of the IP address:
     Serial.print(Ethernet.localIP()[i], DEC);
-    Serial.print(".");
+    Serial.print(F("."));
   }
   Serial.println();
 #endif
@@ -279,14 +264,14 @@ void setup(){
   if (ret == 1) {
     
 #ifdef USE_SERIAL_DEBUG
-    Serial.print("DNS IP:");
+    Serial.print(F("DNS IP:"));
     for (byte thisByte = 0; thisByte < 4; thisByte++) {
       // print the value of each byte of the IP address:
       Serial.print(serverIp[thisByte], DEC);
 
       //get ip 
       oscServerIp[thisByte] = serverIp[thisByte];
-      Serial.print("."); 
+      Serial.print(F(".")); 
     }
     Serial.println();
  #endif 
@@ -295,7 +280,7 @@ void setup(){
     
   } else {
 #ifdef USE_SERIAL_DEBUG    
-    Serial.print("Failed to resolve hostname: ");
+    Serial.print(F("Failed to resolve hostname: "));
     Serial.println(ret, DEC);
 #endif    
   }
@@ -360,12 +345,6 @@ void setup(){
   //init animation mode
   initAnimationMode();
 
-// --sd-------------------------------------
-
-#ifdef USE_SD
-  initSdCardInformation();
-#endif
-
   //let the onboard arduino led blink
   pinMode(ledPin, OUTPUT);  
   synchronousBlink();
@@ -412,7 +391,7 @@ void loop(){
 #ifdef USE_OSC    
     if (frame%50000==1) {
 #ifdef USE_SERIAL_DEBUG
-  Serial.println("OSC Ping");
+  Serial.println(F("OSC Ping"));
 #endif  
       sendOscPingToServer();
     }
