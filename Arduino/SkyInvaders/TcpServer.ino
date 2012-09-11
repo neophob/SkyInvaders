@@ -25,7 +25,7 @@ sendtyped /pxl iiiii 22 16711935 16711935 16711935 16711935
 #ifdef USE_OSC
 
 #ifdef USE_OSC_DECRYPTION
-
+/*
 #define SIZE_ENCRYPTED_PACKAGE 80
 
 void handleEncryptedTraffic() {
@@ -64,6 +64,6 @@ void handleEncryptedTraffic() {
   }
   
 }
-
+*/
 #endif
 #endif

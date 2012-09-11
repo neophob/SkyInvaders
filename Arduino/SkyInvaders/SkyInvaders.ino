@@ -32,7 +32,7 @@ Version 1.0 of the Arduino IDE introduced the F() syntax for storing strings in 
 //SD card needs 7778 bytes and is unfinished!
 //#define USE_SD
 
-//use DHCP server OR static IP, dhcp needs 3148 bytes
+//use DHCP server OR static IP, dhcp needs 3148 bytes eeprom, 243 free 
 #define USE_DHCP 1
 
 //use serial debug or not, needs 3836 bytes
@@ -41,7 +41,7 @@ Version 1.0 of the Arduino IDE introduced the F() syntax for storing strings in 
 //enable basic osc server
 #define USE_OSC 1
 
-//enable the option to decrypt an encrypted OSC packet
+//enable the option to decrypt an encrypted OSC packet 46 bytes ram
 //#define USE_OSC_DECRYPTION 1
 
 
@@ -72,7 +72,7 @@ Version 1.0 of the Arduino IDE introduced the F() syntax for storing strings in 
 #ifdef USE_OSC
 //make sure you enabled strings (#define _USE_STRING_) in OSCcommon.h
 #include <ArdOSC.h>
-//#include <Dns.h>
+#include <Dns.h>
 #endif
 
 //used as we need to send out raw socket stuff
@@ -144,17 +144,17 @@ EthernetServer decryptionServer(ARDUINO_LISTENING_ENCRYPTION_PORT);
 #define OSC_SERVER "192.168.111.21" 
 
 //change display mode, 3 modes: static color, color fade, serverimage
-#define OSC_MSG_MODE "/mode" 
+#define OSC_MSG_MODE "/mod" 
 
 //change color of static color mode
-#define OSC_MSG_STATIC_COL_R "/colr" 
-#define OSC_MSG_STATIC_COL_G "/colg" 
-#define OSC_MSG_STATIC_COL_B "/colb" 
+#define OSC_MSG_STATIC_COL_R "/r" 
+#define OSC_MSG_STATIC_COL_G "/g" 
+#define OSC_MSG_STATIC_COL_B "/b" 
 
-#define OSC_MSG_COLFADE_COLORSET "/colorSet" 
+#define OSC_MSG_COLFADE_COLORSET "/cos" 
 
 //generic animation speed
-#define OSC_MSG_GENERIC_SPEED "/speed" 
+#define OSC_MSG_GENERIC_SPEED "/spd" 
 
 #define OSC_MSG_WOL "/wol" 
 
@@ -227,6 +227,10 @@ void setup(){
     Serial.println(NR_OF_PIXELS, DEC);
   #endif
 
+#ifdef USE_SERIAL_DEBUG
+  Serial.print(F("Free Mem: "));
+  Serial.println(freeRam(), DEC);
+#endif  
 
 // --DHCP-------------------------------------
 #ifdef USE_DHCP
@@ -249,7 +253,6 @@ void setup(){
   #ifdef USE_SERIAL_DEBUG
     Serial.println(F("Use Manual IP"));
   #endif
-
   //Manual IP
   Ethernet.begin(myMac, myIp);
 #endif 
@@ -257,16 +260,16 @@ void setup(){
 
 #ifdef USE_SERIAL_DEBUG
   Serial.print(F("IP: "));
-  for (byte thisByte = 0; thisByte < 4; thisByte++) {
+  for (byte i = 0; i < 4; i++) {
     // print the value of each byte of the IP address:
-    Serial.print(Ethernet.localIP()[thisByte], DEC);
+    Serial.print(Ethernet.localIP()[i], DEC);
     Serial.print(".");
   }
   Serial.println();
 #endif
 
 // --dns-------------------------------------
-/*
+
 #ifdef USE_OSC
   //get ip from dns name, used to find osc server
   DNSClient dns;
@@ -296,7 +299,7 @@ void setup(){
     Serial.println(ret, DEC);
 #endif    
   }
-#endif*/
+#endif
 
 
 // --led strip-------------------------------------

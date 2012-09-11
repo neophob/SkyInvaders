@@ -2,7 +2,7 @@
 //use this lib: http://henningkarlsen.com/electronics/library.php?id=37
 
 // set up variables using the SD utility library functions:
-
+/*
 // change this to match your SD shield or module;
 // Arduino Ethernet shield: pin 4
 // Adafruit SD shields and modules: pin 10
@@ -98,5 +98,5 @@ void readFileFromSd() {
       //read line
   }
     
-}
+}*/
 #endif
