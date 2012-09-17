@@ -38,12 +38,6 @@ void loopAnimationMode() {
        
      case MODE_SERVER_IMAGE:
      
-#ifdef USE_SD
-       //check if no data recieved, switch to playback mode
-       if (frame > 200) { //TODO verify 200
-           readFileFromSd();
-       }
-#endif
        break;
   }
 }

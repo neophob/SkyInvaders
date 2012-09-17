@@ -56,7 +56,7 @@ Version 1.0 of the Arduino IDE introduced the F() syntax for storing strings in 
 #define USE_WS2801 1
 //#define USE_LPD8806 1
 
-//TODO changeme
+//TODO replace it with your OSC server
 #define OSC_SERVER "192.168.111.21" 
 
 
@@ -123,11 +123,12 @@ EthernetUDP Udp;
 const int serverPort  = 10000;
 OSCServer oscServer;
 
+//this array will be filled by the dns client
 byte oscServerIp[]  = { 
   0,0,0,0 };
 
 IPAddress serverIp;
-//OSCClient client; //TODO ADDME
+OSCClient client; //TODO ADDME
 
 #ifdef USE_OSC_DECRYPTION
 #define ARDUINO_LISTENING_ENCRYPTION_PORT 7999
@@ -264,7 +265,7 @@ void setup(){
   if (ret == 1) {
     
 #ifdef USE_SERIAL_DEBUG
-    Serial.print(F("DNS IP:"));
+    Serial.print(F("OSC IP:"));
     for (byte thisByte = 0; thisByte < 4; thisByte++) {
       // print the value of each byte of the IP address:
       Serial.print(serverIp[thisByte], DEC);
@@ -390,11 +391,18 @@ void loop(){
     frame++;
     
 #ifdef USE_OSC    
-    if (frame%50000==1) {
+    if (frame%5==1) {
+//    if (frame%50000==1) {
 #ifdef USE_SERIAL_DEBUG
   Serial.println(F("OSC Ping"));
 #endif  
       sendOscPingToServer();
+      
+  Serial.print(F("Free Mem: "));
+  Serial.print(freeRam(), DEC);
+  Serial.print(" ");
+  Serial.println(millis(), DEC);
+      
     }
 #endif
 

@@ -182,12 +182,44 @@ void sendOscPingToServer() {
   OSCMessage localMsg;
   
   localMsg.setAddress(oscServerIp, serverPort);
-  localMsg.beginMessage("/ping");
+  localMsg.beginMessage("/ping1");
 
   //maybe add own ip as parameter?
+  Serial.println(F("SEND 2!"));
+//  Serial.println(OSC_SERVER);
   
-  //TODO ADD ME
-  //client.send(&localMsg);  
+  //send packed unencrypted
+  int16_t val = client.send(&localMsg);
+  if (val < 0) {
+    Serial.print(F("FAILED TO SEND: "));
+    Serial.println(val, DEC);
+  }
+
+
+//  uint8_t *packetData;
+//  uint16_t packetSize;
+//  Serial.println(F("SEND 1!"));
+  
+  //get raw osc packet
+//  packetSize = client.preparePacketData(&localMsg, packetData);
+  
+//  Serial.print("SZE: ");
+//  Serial.println(packetSize, DEC);
+  
+  //TODO make method out of this
+  //-- Start decrypt
+/*  for (uint16_t n=0; n<packetSize; n++) {
+     packetData[n] = packetData[n]^12;
+  }*/
+  //-- End decrypt
+
+  
+  //send packet out
+//  client.sendPacketData(&localMsg, packetData);
+  
+  //maybe add own ip as parameter?
+//  Serial.println(F("SEND 3!"));
+  
 }
 
 #endif
