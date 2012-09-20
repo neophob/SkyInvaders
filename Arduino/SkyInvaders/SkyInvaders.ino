@@ -1,7 +1,7 @@
 /*
  * SkyInvaders firmware, Copyright (C) 2012 michael vogt <michu@neophob.com>
  *
- * This file is part of SkyInvaders. 687/422 
+ * This file is part of SkyInvaders. 
  *
  * ExpeditInvaders is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ Version 1.0 of the Arduino IDE introduced the F() syntax for storing strings in 
 #define USE_WOL 1
 
 //use DHCP server OR static IP, dhcp needs 3148 bytes eeprom
-//#define USE_DHCP 1
+#define USE_DHCP 1
 
 //use serial debug or not, needs 3836 bytes
 #define USE_SERIAL_DEBUG 1
