@@ -36,12 +36,13 @@ byte xdigit( char digit ){
 
 #ifdef USE_SERIAL_DEBUG 
 
-/*int freeRamSSS() {
+int freeRam() {
   extern int __heap_start, *__brkval; 
   int v; 
   return (int) &v - (__brkval == 0 ? (int) &__heap_start : (int) __brkval); 
-}*/
+}
 
+/*
 int freeRam() {
   int byteCounter = 0; // initialize a counter
   byte *byteArray; // create a pointer to a byte array
@@ -57,7 +58,7 @@ int freeRam() {
   free(byteArray); // also free memory after the function finishes
   
   return byteCounter; // send back the highest number of bytes successfully allocated
-}
+}*/
 #endif
 
 
