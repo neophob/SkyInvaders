@@ -176,50 +176,49 @@ void oscCallbackPixel(OSCMessage *_mes) {
   } 
 }
 
-//send a ping osc message to the server with the name OSC_SERVER
-void sendOscPingToServer() {
-  //loacal_mes,str is release by out of scope
-  OSCMessage localMsg;
-  
-  localMsg.setAddress(oscServerIp, serverPort);
-  localMsg.beginMessage("/ping1");
 
-  //maybe add own ip as parameter?
-  Serial.println(F("SEND 2!"));
-//  Serial.println(OSC_SERVER);
+//Static allocates space for osc package
+uint8_t packetData[192];
+
+
+//send a ping osc message to the server with the name OSC_SERVER
+//maybe add own ip as parameter?
+void sendOscPingToServer() {
   
   //send packed unencrypted
-  int16_t val = client.send(&localMsg);
+/*  int16_t val = client.send(&localMsg);
+  if (val < 0) {
+    Serial.print(F("FAILED TO SEND: "));
+    Serial.println(val, DEC);
+  }*/
+
+ // uint8_t *packetData;
+  
+  int16_t packetSize;
+  
+  //get raw osc packet
+  packetSize = client.preparePacketData(&localMsg, packetData);
+  if (packetSize<0) {
+    Serial.print(F("FAILED TO PREPARE: "));
+    Serial.println(packetSize, DEC);
+    return;
+  }
+  Serial.print("SZE: ");
+  Serial.println(packetSize, DEC);
+  
+  //TODO replace me with some real encryption stuff
+  //-- Start encrypt
+  for (uint16_t n=0; n<packetSize; n++) {
+     packetData[n] = packetData[n]^12;
+  }
+  //-- End encrypt
+
+  //send packet out
+  int16_t val = client.sendPacketData(&localMsg, packetData);
   if (val < 0) {
     Serial.print(F("FAILED TO SEND: "));
     Serial.println(val, DEC);
   }
-
-
-//  uint8_t *packetData;
-//  uint16_t packetSize;
-//  Serial.println(F("SEND 1!"));
-  
-  //get raw osc packet
-//  packetSize = client.preparePacketData(&localMsg, packetData);
-  
-//  Serial.print("SZE: ");
-//  Serial.println(packetSize, DEC);
-  
-  //TODO make method out of this
-  //-- Start decrypt
-/*  for (uint16_t n=0; n<packetSize; n++) {
-     packetData[n] = packetData[n]^12;
-  }*/
-  //-- End decrypt
-
-  
-  //send packet out
-//  client.sendPacketData(&localMsg, packetData);
-  
-  //maybe add own ip as parameter?
-//  Serial.println(F("SEND 3!"));
-  
 }
 
 #endif

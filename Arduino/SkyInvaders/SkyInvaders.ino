@@ -122,6 +122,7 @@ EthernetUDP Udp;
 
 const int serverPort  = 10000;
 OSCServer oscServer;
+OSCMessage localMsg;  
 
 //this array will be filled by the dns client
 byte oscServerIp[]  = { 
@@ -285,6 +286,10 @@ void setup(){
     Serial.println(ret, DEC);
 #endif    
   }
+  
+  localMsg.beginMessage("/ping1");
+  localMsg.setAddress(oscServerIp, serverPort);
+  
 #endif
 
 
@@ -396,7 +401,7 @@ void loop(){
 #ifdef USE_SERIAL_DEBUG
   Serial.println(F("OSC Ping"));
 #endif  
-      sendOscPingToServer();
+  sendOscPingToServer();
       
   Serial.print(F("Free Mem: "));
   Serial.print(freeRam(), DEC);
